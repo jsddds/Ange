@@ -1,0 +1,2160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love lottery ♡</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap');
+
+:root {
+    --pink: #e98ba9;
+    --pink-dark: #c95f82;
+    --pink-light: #fff1f5;
+    --white: #fffdfd;
+    --text: #38232b;
+    --muted: #96747f;
+    --glass: rgba(255,255,255,.68);
+    --shadow: 0 30px 80px rgba(153, 63, 91, .16);
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+}
+
+body {
+    font-family: "DM Sans", sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(circle at 15% 15%, rgba(255,255,255,.95), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(255,206,220,.65), transparent 30%),
+        linear-gradient(135deg, #fff8fa 0%, #ffe8ef 45%, #fff7f9 100%);
+    overflow-x: hidden;
+}
+
+body.scratching {
+    overflow: hidden;
+    touch-action: none;
+}
+
+button {
+    font: inherit;
+}
+
+button:focus-visible {
+    outline: 2px solid var(--pink-dark);
+    outline-offset: 3px;
+}
+
+/* ---------- BACKGROUND ---------- */
+
+.background {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.glow {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: .35;
+}
+
+.glow.one {
+    top: -180px;
+    left: -130px;
+    background: #ffd1df;
+}
+
+.glow.two {
+    right: -180px;
+    bottom: -150px;
+    background: #f7b4c9;
+}
+
+.petals {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+    overflow: hidden;
+}
+
+.petal {
+    position: absolute;
+    top: -40px;
+    width: 10px;
+    height: 15px;
+    border-radius: 80% 20% 80% 20%;
+    background: rgba(229, 125, 155, .32);
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    to {
+        transform: translate3d(var(--drift), 110vh, 0) rotate(420deg);
+        opacity: 0;
+    }
+}
+
+/* ---------- APP ---------- */
+
+.app {
+    position: relative;
+    z-index: 2;
+    width: min(100%, 1050px);
+    margin: auto;
+    padding: 30px 20px 70px;
+}
+
+/* ---------- TOP BAR ---------- */
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 35px;
+}
+
+.brand {
+    font-family: "Playfair Display", serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--pink-dark);
+}
+
+.top-actions {
+    display: flex;
+    gap: 9px;
+}
+
+.icon-btn {
+    width: 43px;
+    height: 43px;
+    border: 1px solid rgba(201,95,130,.13);
+    background: rgba(255,255,255,.58);
+    backdrop-filter: blur(14px);
+    border-radius: 50%;
+    color: var(--pink-dark);
+    cursor: pointer;
+    transition: .25s ease;
+    display: grid;
+    place-items: center;
+    font-size: 17px;
+}
+
+.icon-btn:hover {
+    transform: translateY(-2px);
+    background: white;
+    box-shadow: 0 8px 25px rgba(201,95,130,.12);
+}
+
+/* ---------- HERO ---------- */
+
+.hero {
+    text-align: center;
+    margin-bottom: 42px;
+}
+
+.eyebrow {
+    color: var(--pink-dark);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+h1 {
+    margin: 0;
+    font-family: "Playfair Display", serif;
+    font-size: clamp(48px, 9vw, 86px);
+    line-height: .95;
+    font-weight: 500;
+    letter-spacing: -3px;
+}
+
+.subtitle {
+    margin: 14px 0 0;
+    color: var(--muted);
+    font-family: "Playfair Display", serif;
+    font-style: italic;
+    font-size: 17px;
+}
+
+/* ---------- LOTTERY ---------- */
+
+.lottery-wrap {
+    perspective: 1400px;
+    display: flex;
+    justify-content: center;
+}
+
+.lottery {
+    width: min(100%, 720px);
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform .2s ease;
+}
+
+.ticket {
+    position: relative;
+    background:
+        linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,246,249,.96));
+    border: 1px solid rgba(255,255,255,.9);
+    border-radius: 35px;
+    padding: 15px;
+    box-shadow:
+        0 45px 100px rgba(116,43,68,.14),
+        inset 0 1px 0 rgba(255,255,255,.9);
+    transform-style: preserve-3d;
+}
+
+.ticket-inner {
+    border: 1px solid rgba(220,128,154,.18);
+    border-radius: 25px;
+    padding: 38px 30px 32px;
+    position: relative;
+    overflow: hidden;
+}
+
+.ticket-inner::before,
+.ticket-inner::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.ticket-inner::before {
+    width: 170px;
+    height: 170px;
+    top: -110px;
+    right: -50px;
+    background: rgba(255,198,215,.35);
+}
+
+.ticket-inner::after {
+    width: 140px;
+    height: 140px;
+    bottom: -100px;
+    left: -45px;
+    background: rgba(255,219,228,.45);
+}
+
+.rose {
+    position: absolute;
+    font-size: 70px;
+    opacity: .12;
+    pointer-events: none;
+}
+
+.rose.one {
+    top: 5px;
+    left: 20px;
+    transform: rotate(-18deg);
+}
+
+.rose.two {
+    right: 20px;
+    bottom: -5px;
+    transform: rotate(20deg);
+}
+
+/* ---------- SCRATCH CARDS ---------- */
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    position: relative;
+    z-index: 3;
+}
+
+.card {
+    position: relative;
+    min-height: 250px;
+    border-radius: 22px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #fff, #fff4f7);
+    border: 1px solid rgba(215,117,145,.13);
+    box-shadow: 0 14px 35px rgba(121,51,73,.09);
+    transform-style: preserve-3d;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.card:hover {
+    box-shadow: 0 22px 45px rgba(121,51,73,.13);
+}
+
+.message {
+    position: absolute;
+    inset: 0;
+    padding: 28px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(255,213,225,.4), transparent 35%),
+        linear-gradient(145deg, #fffdfd, #fff0f5);
+}
+
+.message .heart {
+    color: var(--pink);
+    font-size: 31px;
+    margin-bottom: 14px;
+    animation: heartbeat 1.8s ease-in-out infinite;
+}
+
+.message p {
+    margin: 0;
+    font-family: "Playfair Display", serif;
+    font-size: 18px;
+    line-height: 1.45;
+    max-width: 220px;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    15% { transform: scale(1.13); }
+    30% { transform: scale(1); }
+}
+
+.scratch {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    cursor: crosshair;
+    touch-action: none;
+}
+
+.card.revealed .scratch {
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .45s ease;
+}
+
+.card.revealed {
+    animation: revealCard .55s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes revealCard {
+    0% {
+        transform: scale(.97) rotateX(4deg);
+    }
+    100% {
+        transform: scale(1) rotateX(0);
+    }
+}
+
+/* ---------- BOTTOM ---------- */
+
+.ticket-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 25px;
+    gap: 15px;
+}
+
+.counter {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.action-row {
+    display: flex;
+    gap: 10px;
+}
+
+.main-btn {
+    border: 0;
+    background: var(--pink);
+    color: white;
+    padding: 13px 22px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(201,95,130,.22);
+    transition: .25s ease;
+}
+
+.main-btn:hover {
+    transform: translateY(-2px);
+    background: var(--pink-dark);
+    box-shadow: 0 15px 32px rgba(201,95,130,.28);
+}
+
+.secondary-btn {
+    border: 1px solid rgba(201,95,130,.16);
+    background: rgba(255,255,255,.75);
+    color: var(--pink-dark);
+    padding: 12px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: .25s ease;
+}
+
+.secondary-btn:hover {
+    background: white;
+    transform: translateY(-2px);
+}
+
+/* ---------- FAVOURITE ---------- */
+
+.favourite {
+    position: absolute;
+    right: 13px;
+    top: 13px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,95,130,.13);
+    background: rgba(255,255,255,.8);
+    color: #d68ba2;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0;
+    transition: .2s ease;
+}
+
+.card.revealed .favourite {
+    opacity: 1;
+}
+
+.favourite.saved {
+    color: #d94c7a;
+    background: #fff0f5;
+}
+
+/* ---------- SETTINGS ---------- */
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(56,35,43,.2);
+    backdrop-filter: blur(8px);
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: .3s ease;
+}
+
+.overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(390px, 92vw);
+    height: 100%;
+    background: rgba(255,250,252,.96);
+    backdrop-filter: blur(30px);
+    z-index: 60;
+    padding: 30px;
+    box-shadow: -20px 0 70px rgba(78,27,46,.15);
+    transform: translateX(105%);
+    transition: transform .4s cubic-bezier(.2,.8,.2,1);
+    overflow-y: auto;
+}
+
+.panel.open {
+    transform: translateX(0);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+.panel h2 {
+    font-family: "Playfair Display", serif;
+    font-size: 29px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.setting {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 19px 0;
+    border-bottom: 1px solid rgba(201,95,130,.1);
+}
+
+.setting-text strong {
+    display: block;
+    font-size: 14px;
+}
+
+.setting-text span {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.toggle {
+    width: 46px;
+    height: 26px;
+    border-radius: 999px;
+    background: #e7d4da;
+    position: relative;
+    border: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.toggle::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    transition: .25s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,.12);
+}
+
+.toggle.active {
+    background: var(--pink);
+}
+
+.toggle.active::after {
+    transform: translateX(20px);
+}
+
+.panel-section {
+    margin-top: 30px;
+}
+
+.panel-section h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--pink-dark);
+    margin-bottom: 14px;
+}
+
+.full-btn {
+    width: 100%;
+    margin-top: 9px;
+}
+
+/* ---------- FAVOURITES PANEL ---------- */
+
+.favourites-list {
+    display: grid;
+    gap: 10px;
+}
+
+.favourite-item {
+    padding: 15px;
+    border-radius: 15px;
+    background: white;
+    border: 1px solid rgba(201,95,130,.1);
+    font-family: "Playfair Display", serif;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+/* ---------- HEART BURST ---------- */
+
+.heart-burst {
+    position: fixed;
+    pointer-events: none;
+    z-index: 100;
+    font-size: 18px;
+    animation: burst 1s ease forwards;
+}
+
+@keyframes burst {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(.5);
+    }
+
+    100% {
+        opacity: 0;
+        transform:
+            translate(
+                calc(-50% + var(--x)),
+                calc(-50% + var(--y))
+            )
+            scale(1.2)
+            rotate(var(--r));
+    }
+}
+
+/* ---------- REDUCED MOTION ---------- */
+
+body.reduced-motion *,
+body.reduced-motion *::before,
+body.reduced-motion *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 700px) {
+
+    .app {
+        padding: 20px 13px 45px;
+    }
+
+    .topbar {
+        margin-bottom: 25px;
+    }
+
+    h1 {
+        font-size: 55px;
+    }
+
+    .hero {
+        margin-bottom: 28px;
+    }
+
+    .ticket {
+        padding: 8px;
+        border-radius: 25px;
+    }
+
+    .ticket-inner {
+        padding: 20px 12px 20px;
+        border-radius: 19px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        min-height: 190px;
+    }
+
+    .message p {
+        font-size: 17px;
+    }
+
+    .ticket-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .counter {
+        text-align: center;
+    }
+
+    .action-row {
+        justify-content: center;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="background">
+    <div class="glow one"></div>
+    <div class="glow two"></div>
+</div>
+
+<div class="petals" id="petals"></div>
+
+<div class="app">
+
+    <header class="topbar">
+        <div class="brand">coded by ur maid</div>
+
+        <div class="top-actions">
+            <button class="icon-btn" id="favouritesBtn" aria-label="Favourites">♡</button>
+            <button class="icon-btn" id="settingsBtn" aria-label="Settings">⚙</button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="eyebrow">just for you</div>
+        <h1>Love lottery</h1>
+        <p class="subtitle">a tiny collection of reasons i adore you</p>
+    </section>
+
+    <main class="lottery-wrap">
+
+        <div class="lottery" id="lottery">
+
+            <div class="ticket">
+
+                <div class="ticket-inner">
+
+                    <div class="rose one">🌹</div>
+                    <div class="rose two">🌹</div>
+
+                    <div class="cards" id="cards"></div>
+
+                    <div class="ticket-footer">
+                        <div class="counter">
+                            <span id="revealedCount">0</span> revealed
+                        </div>
+
+                        <div class="action-row">
+                            <button class="secondary-btn" id="shuffleBtn">
+                                new ones
+                            </button>
+
+                            <button class="main-btn" id="revealBtn">
+                                reveal all ♡
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- SETTINGS -->
+
+<div class="overlay" id="overlay"></div>
+
+<aside class="panel" id="settingsPanel">
+
+    <div class="panel-header">
+        <h2>settings</h2>
+        <button class="icon-btn" id="closeSettings">×</button>
+    </div>
+
+    <div class="setting">
+        <div class="setting-text">
+            <strong>Falling petals</strong>
+            <span>little flowers in the background</span>
+        </div>
+        <button class="toggle active" id="petalsToggle"></button>
+    </div>
+
+    <div class="setting">
+        <div class="setting-text">
+            <strong>Sounds</strong>
+            <span>tiny sounds when you interact</span>
+        </div>
+        <button class="toggle active" id="soundToggle"></button>
+    </div>
+
+    <div class="setting">
+        <div class="setting-text">
+            <strong>Reduced motion</strong>
+            <span>less movement and animation</span>
+        </div>
+        <button class="toggle" id="motionToggle"></button>
+    </div>
+
+    <div class="panel-section">
+
+        <h3>your lottery</h3>
+
+        <button class="secondary-btn full-btn" id="resetBtn">
+            reset revealed cards
+        </button>
+
+        <button class="secondary-btn full-btn" id="clearFavsBtn">
+            clear favourites
+        </button>
+
+    </div>
+
+</aside>
+
+
+<!-- FAVOURITES -->
+
+<aside class="panel" id="favouritesPanel">
+
+    <div class="panel-header">
+        <h2>favourites</h2>
+        <button class="icon-btn" id="closeFavourites">×</button>
+    </div>
+
+    <div class="favourites-list" id="favouritesList"></div>
+
+</aside>
+
+
+<script>
+/* =========================================================
+   LOVE LOTTERY
+   Everything is contained in this one file.
+   ========================================================= */
+
+const messages = [
+
+    "i still get stupidly happy when i see your name pop up.",
+
+    "you somehow make ordinary days feel special.",
+
+    "i would choose you in every universe.",
+
+    "you are my favourite notification.",
+
+    "i love the little things you do that you probably don't even notice.",
+
+    "being around you makes everything feel softer.",
+
+    "you make me smile like an idiot.",
+
+    "i could listen to you talk for hours.",
+
+    "you are ridiculously easy to adore.",
+
+    "i hope you know how important you are to me.",
+
+    "you make my heart do that embarrassing little thing.",
+
+    "i love having you in my life.",
+
+    "somehow you became my favourite person.",
+
+    "i would still pick you even if the lottery had a million prizes.",
+
+    "you make me want to be a better person.",
+
+    "i love your existence. yes, literally your existence.",
+
+    "you are the plot twist i actually wanted.",
+
+    "you make my day better without even trying.",
+
+    "i love every random conversation we have.",
+
+    "you deserve flowers for absolutely no reason.",
+
+    "i'm keeping you. sorry, no refunds.",
+
+    "you have permanently occupied a ridiculous amount of my thoughts.",
+
+    "i hope i never get used to how lucky i feel to have you.",
+
+    "you are one of my favourite parts of every day.",
+
+    "i love when you get excited about something.",
+
+    "your happiness matters to me more than you probably realise.",
+
+    "you make even doing nothing together feel like something.",
+
+    "i'd save the last slice for you. probably.",
+
+    "you are very, very loved.",
+
+    "i'm suspicious of how easily you make me smile.",
+
+    "you are my favourite person to annoy.",
+
+    "i like you an unreasonable amount.",
+
+    "you somehow make my brain forget how to behave.",
+
+    "if loving you was a full-time job, i'd happily work overtime.",
+
+    "you make my world feel a little prettier.",
+
+    "i love the way you make me feel safe being myself.",
+
+    "you are worth all the cheesy messages in the world.",
+
+    "i'd choose another day with you over a thousand boring perfect ones.",
+
+    "you are genuinely one of the best things that happened to me.",
+
+    "i love knowing that somewhere in this world, you exist.",
+
+    "you are cute. unfortunately, this is now permanent.",
+
+    "i hope this little card made you smile.",
+
+    "i love you more than this tiny website can fit.",
+
+    "you're stuck with me now ♡",
+
+    "i'm very grateful that you're you.",
+
+    "you make my heart feel ridiculously full.",
+
+    "if i had to pick one person to spend a completely random Tuesday with, i'd pick you.",
+
+    "you make everything feel a little more like home.",
+
+    "i adore you. that's the whole card.",
+
+    "you are my favourite kind of distraction.",
+
+    "i love hearing your thoughts, even the completely random ones.",
+
+    "you deserve to be reminded how loved you are.",
+
+    "i'd keep finding you in every version of this life.",
+
+    "you make me excited about little things.",
+
+    "my favourite place is wherever i'm laughing with you.",
+
+    "you are incredibly precious to me.",
+
+    "i love the person you are.",
+
+    "you're allowed to be proud of yourself. i'm already proud of you.",
+
+    "i hope you always know you can be yourself with me.",
+
+    "you're my favourite human. statistically, emotionally, scientifically.",
+
+    "i would absolutely pick you again.",
+
+    "you're basically my favourite little miracle.",
+
+    "thank you for existing at the exact same time as me.",
+
+    "you make my heart very inconveniently happy.",
+
+    "i love you. annoyingly much.",
+
+    "you make my life better just by being in it.",
+
+    "i hope today treats you as kindly as you deserve.",
+
+    "there is a suspicious amount of love hidden inside this website.",
+
+    "this card contains one certified fact: you're adorable.",
+
+    "i'm glad i get to know you.",
+
+    "you make me want to collect tiny memories with you forever.",
+
+    "i love every version of you.",
+
+    "you are worth celebrating on completely normal days.",
+
+    "you're my favourite person to think about.",
+
+    "i'd still choose you after reading every possible option.",
+
+    "you are absolutely worth the ridiculous amount of pink on this screen.",
+
+    "you make me feel lucky.",
+
+    "you're one of those people i never want to lose.",
+
+    "i love your little habits.",
+
+    "you have a permanent reservation in my heart.",
+
+    "you make my days more interesting.",
+
+    "i hope you know that you matter.",
+
+    "you make me happier than you probably realise.",
+
+    "i love being able to call you mine.",
+
+    "you are my favourite person to make memories with.",
+
+    "you make me want to romanticise absolutely everything.",
+
+    "you are the reason this website exists.",
+
+    "yes, i made an entire lottery because apparently one love letter wasn't enough.",
+
+    "you won. obviously.",
+
+    "jackpot: me loving you.",
+
+    "rare prize unlocked: one extremely loved girlfriend.",
+
+    "congratulations. you are still my favourite.",
+
+    "breaking news: i adore you.",
+
+    "limited edition girlfriend. no restocks.",
+
+    "100% authentic affection. no preservatives.",
+
+    "this message has been personally approved by my heart.",
+
+    "you've won today's grand prize: another reminder that i love you.",
+
+    "the odds of me loving you were somehow 100%.",
+
+    "surprise! it's me being obsessed with how lovely you are.",
+
+    "you found the secret prize: a stupidly happy boyfriend.",
+
+    "your prize is knowing someone thinks you're wonderful.",
+
+    "this lottery has one rule: you always win.",
+
+    "official result: still completely in love with you.",
+
+    "you have successfully collected another reason to smile.",
+
+    "i hope you keep this one.",
+
+    "consider this your daily reminder that you're loved.",
+
+    "i'd give you the whole jackpot.",
+
+    "you are worth more than every fake million-dollar prize combined."
+
+];
+
+
+/* =========================================================
+   STATE
+   ========================================================= */
+
+const state = {
+    favourites: JSON.parse(localStorage.getItem("love-favourites") || "[]"),
+    sound: localStorage.getItem("love-sound") !== "false",
+    petals: localStorage.getItem("love-petals") !== "false",
+    reducedMotion: localStorage.getItem("love-reduced-motion") === "true",
+    revealed: Number(localStorage.getItem("love-revealed") || 0),
+    currentMessages: []
+};
+
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const cardsEl = document.getElementById("cards");
+const revealedCountEl = document.getElementById("revealedCount");
+const lottery = document.getElementById("lottery");
+
+const settingsPanel = document.getElementById("settingsPanel");
+const favouritesPanel = document.getElementById("favouritesPanel");
+const overlay = document.getElementById("overlay");
+
+const petalsToggle = document.getElementById("petalsToggle");
+const soundToggle = document.getElementById("soundToggle");
+const motionToggle = document.getElementById("motionToggle");
+
+const favouritesList = document.getElementById("favouritesList");
+
+
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+
+function saveState() {
+    localStorage.setItem(
+        "love-favourites",
+        JSON.stringify(state.favourites)
+    );
+
+    localStorage.setItem(
+        "love-sound",
+        state.sound
+    );
+
+    localStorage.setItem(
+        "love-petals",
+        state.petals
+    );
+
+    localStorage.setItem(
+        "love-reduced-motion",
+        state.reducedMotion
+    );
+
+    localStorage.setItem(
+        "love-revealed",
+        state.revealed
+    );
+}
+
+
+function randomItem(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+
+function shuffleArray(array) {
+    const copy = [...array];
+
+    for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+
+    return copy;
+}
+
+
+/* =========================================================
+   SOUND
+   ========================================================= */
+
+let audioContext = null;
+
+function playSound(type = "click") {
+
+    if (!state.sound) return;
+
+    try {
+
+        if (!audioContext) {
+            audioContext =
+                new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
+
+        if (type === "reveal") {
+
+            oscillator.frequency.setValueAtTime(
+                520,
+                audioContext.currentTime
+            );
+
+            oscillator.frequency.exponentialRampToValueAtTime(
+                760,
+                audioContext.currentTime + .16
+            );
+
+        } else {
+
+            oscillator.frequency.setValueAtTime(
+                420,
+                audioContext.currentTime
+            );
+
+            oscillator.frequency.exponentialRampToValueAtTime(
+                500,
+                audioContext.currentTime + .08
+            );
+        }
+
+        gain.gain.setValueAtTime(
+            .0001,
+            audioContext.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            .035,
+            audioContext.currentTime + .01
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            .0001,
+            audioContext.currentTime + .16
+        );
+
+        oscillator.start();
+
+        oscillator.stop(
+            audioContext.currentTime + .17
+        );
+
+    } catch (e) {
+        // Audio isn't essential.
+    }
+}
+
+
+/* =========================================================
+   HEART EFFECT
+   ========================================================= */
+
+function heartBurst(x, y) {
+
+    if (state.reducedMotion) return;
+
+    for (let i = 0; i < 9; i++) {
+
+        const heart = document.createElement("div");
+
+        heart.className = "heart-burst";
+        heart.textContent = Math.random() > .5 ? "♥" : "♡";
+
+        heart.style.left = `${x}px`;
+        heart.style.top = `${y}px`;
+
+        heart.style.setProperty(
+            "--x",
+            `${(Math.random() - .5) * 180}px`
+        );
+
+        heart.style.setProperty(
+            "--y",
+            `${(Math.random() - .5) * 160}px`
+        );
+
+        heart.style.setProperty(
+            "--r",
+            `${(Math.random() - .5) * 80}deg`
+        );
+
+        document.body.appendChild(heart);
+
+        setTimeout(() => {
+            heart.remove();
+        }, 1000);
+    }
+}
+
+
+/* =========================================================
+   SCRATCH CARD
+   ========================================================= */
+
+class ScratchCard {
+
+    constructor(element) {
+
+        this.card = element;
+        this.canvas = element.querySelector(".scratch");
+
+        this.ctx = this.canvas.getContext("2d", {
+            willReadFrequently: true
+        });
+
+        this.isDown = false;
+        this.revealed = false;
+        this.lastPoint = null;
+
+        this.resize();
+
+        this.setup();
+
+        window.addEventListener(
+            "resize",
+            () => this.resize()
+        );
+    }
+
+
+    resize() {
+
+        const rect = this.card.getBoundingClientRect();
+
+        const dpr = Math.min(
+            window.devicePixelRatio || 1,
+            2
+        );
+
+        this.canvas.width = rect.width * dpr;
+        this.canvas.height = rect.height * dpr;
+
+        this.canvas.style.width = rect.width + "px";
+        this.canvas.style.height = rect.height + "px";
+
+        this.ctx.setTransform(
+            dpr,
+            0,
+            0,
+            dpr,
+            0,
+            0
+        );
+
+        this.width = rect.width;
+        this.height = rect.height;
+
+        if (!this.revealed) {
+            this.paint();
+        }
+    }
+
+
+    paint() {
+
+        const ctx = this.ctx;
+
+        ctx.globalCompositeOperation = "source-over";
+
+        const gradient = ctx.createLinearGradient(
+            0,
+            0,
+            this.width,
+            this.height
+        );
+
+        gradient.addColorStop(0, "#f5a9bf");
+        gradient.addColorStop(.5, "#e98ba9");
+        gradient.addColorStop(1, "#d96f91");
+
+        ctx.fillStyle = gradient;
+
+        ctx.fillRect(
+            0,
+            0,
+            this.width,
+            this.height
+        );
+
+        /* subtle shine */
+
+        const shine = ctx.createLinearGradient(
+            0,
+            0,
+            this.width,
+            this.height
+        );
+
+        shine.addColorStop(
+            0,
+            "rgba(255,255,255,.42)"
+        );
+
+        shine.addColorStop(
+            .45,
+            "rgba(255,255,255,0)"
+        );
+
+        ctx.fillStyle = shine;
+
+        ctx.fillRect(
+            0,
+            0,
+            this.width,
+            this.height
+        );
+
+        /* texture dots */
+
+        ctx.fillStyle = "rgba(255,255,255,.12)";
+
+        for (let i = 0; i < 100; i++) {
+
+            const x = Math.random() * this.width;
+            const y = Math.random() * this.height;
+
+            ctx.beginPath();
+
+            ctx.arc(
+                x,
+                y,
+                Math.random() * 1.5,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+        }
+
+        ctx.fillStyle = "rgba(255,255,255,.9)";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.font =
+            '600 13px "DM Sans", sans-serif';
+
+        ctx.fillText(
+            "scratch ♡",
+            this.width / 2,
+            this.height / 2
+        );
+    }
+
+
+    setup() {
+
+        this.canvas.addEventListener(
+            "pointerdown",
+            e => this.start(e)
+        );
+
+        this.canvas.addEventListener(
+            "pointermove",
+            e => this.move(e)
+        );
+
+        this.canvas.addEventListener(
+            "pointerup",
+            e => this.end(e)
+        );
+
+        this.canvas.addEventListener(
+            "pointercancel",
+            e => this.end(e)
+        );
+
+        this.canvas.addEventListener(
+            "lostpointercapture",
+            e => this.end(e)
+        );
+
+        this.canvas.addEventListener(
+            "pointerleave",
+            e => {
+                if (this.isDown) {
+                    this.move(e);
+                }
+            }
+        );
+    }
+
+
+    point(event) {
+
+        const rect =
+            this.canvas.getBoundingClientRect();
+
+        return {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
+        };
+    }
+
+
+    start(event) {
+
+        if (this.revealed) return;
+
+        event.preventDefault();
+
+        this.isDown = true;
+
+        this.lastPoint =
+            this.point(event);
+
+        try {
+            this.canvas.setPointerCapture(
+                event.pointerId
+            );
+        } catch (e) {}
+
+        document.body.classList.add("scratching");
+
+        this.scratch(
+            this.lastPoint.x,
+            this.lastPoint.y
+        );
+
+        playSound();
+    }
+
+
+    move(event) {
+
+        if (!this.isDown || this.revealed) return;
+
+        event.preventDefault();
+
+        const point = this.point(event);
+
+        const last = this.lastPoint || point;
+
+        const distance = Math.hypot(
+            point.x - last.x,
+            point.y - last.y
+        );
+
+        const steps = Math.max(
+            1,
+            Math.ceil(distance / 8)
+        );
+
+        for (let i = 0; i < steps; i++) {
+
+            const t = i / steps;
+
+            const x =
+                last.x +
+                (point.x - last.x) * t;
+
+            const y =
+                last.y +
+                (point.y - last.y) * t;
+
+            this.scratch(x, y);
+        }
+
+        this.lastPoint = point;
+
+        if (Math.random() < .05) {
+            this.checkReveal();
+        }
+    }
+
+
+    scratch(x, y) {
+
+        const ctx = this.ctx;
+
+        ctx.save();
+
+        ctx.globalCompositeOperation =
+            "destination-out";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            x,
+            y,
+            25,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+
+    end(event) {
+
+        if (!this.isDown) return;
+
+        this.isDown = false;
+        this.lastPoint = null;
+
+        document.body.classList.remove("scratching");
+
+        try {
+            this.canvas.releasePointerCapture(
+                event.pointerId
+            );
+        } catch (e) {}
+
+        this.checkReveal();
+    }
+
+
+    checkReveal() {
+
+        if (this.revealed) return;
+
+        const smallWidth = 50;
+        const smallHeight = 50;
+
+        const temp = document.createElement("canvas");
+
+        temp.width = smallWidth;
+        temp.height = smallHeight;
+
+        const tempCtx = temp.getContext(
+            "2d",
+            { willReadFrequently: true }
+        );
+
+        tempCtx.drawImage(
+            this.canvas,
+            0,
+            0,
+            smallWidth,
+            smallHeight
+        );
+
+        const pixels =
+            tempCtx.getImageData(
+                0,
+                0,
+                smallWidth,
+                smallHeight
+            ).data;
+
+        let transparent = 0;
+
+        for (let i = 3; i < pixels.length; i += 4) {
+
+            if (pixels[i] < 80) {
+                transparent++;
+            }
+        }
+
+        const percentage =
+            transparent / (pixels.length / 4);
+
+        if (percentage >= .42) {
+            this.reveal();
+        }
+    }
+
+
+    reveal() {
+
+        if (this.revealed) return;
+
+        this.revealed = true;
+
+        this.card.classList.add("revealed");
+
+        state.revealed++;
+
+        updateCounter();
+        saveState();
+
+        playSound("reveal");
+
+        const rect =
+            this.card.getBoundingClientRect();
+
+        heartBurst(
+            rect.left + rect.width / 2,
+            rect.top + rect.height / 2
+        );
+    }
+}
+
+
+/* =========================================================
+   CREATE CARDS
+   ========================================================= */
+
+let scratchCards = [];
+
+
+function createCards() {
+
+    cardsEl.innerHTML = "";
+    scratchCards = [];
+
+    const selected =
+        shuffleArray(messages).slice(0, 3);
+
+    state.currentMessages = selected;
+
+    selected.forEach((message, index) => {
+
+        const card = document.createElement("article");
+
+        card.className = "card";
+
+        card.innerHTML = `
+            <div class="message">
+                <div class="heart">♥</div>
+                <p>${message}</p>
+            </div>
+
+            <button
+                class="favourite"
+                aria-label="Save favourite"
+                title="Save favourite"
+            >
+                ♡
+            </button>
+
+            <canvas class="scratch"></canvas>
+        `;
+
+        cardsEl.appendChild(card);
+
+        const favouriteButton =
+            card.querySelector(".favourite");
+
+        favouriteButton.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                const saved =
+                    state.favourites.includes(message);
+
+                if (saved) {
+
+                    state.favourites =
+                        state.favourites.filter(
+                            item => item !== message
+                        );
+
+                } else {
+
+                    state.favourites.push(message);
+
+                    heartBurst(
+                        event.clientX,
+                        event.clientY
+                    );
+                }
+
+                updateFavouriteButton(
+                    favouriteButton,
+                    message
+                );
+
+                updateFavourites();
+
+                saveState();
+
+                playSound();
+            }
+        );
+
+        const scratch =
+            new ScratchCard(card);
+
+        scratchCards.push(scratch);
+
+        updateFavouriteButton(
+            favouriteButton,
+            message
+        );
+    });
+}
+
+
+function updateFavouriteButton(button, message) {
+
+    const saved =
+        state.favourites.includes(message);
+
+    button.classList.toggle(
+        "saved",
+        saved
+    );
+
+    button.textContent =
+        saved ? "♥" : "♡";
+}
+
+
+/* =========================================================
+   COUNTER
+   ========================================================= */
+
+function updateCounter() {
+
+    revealedCountEl.textContent =
+        state.revealed;
+}
+
+
+/* =========================================================
+   REVEAL ALL
+   ========================================================= */
+
+document
+    .getElementById("revealBtn")
+    .addEventListener("click", () => {
+
+        scratchCards.forEach(card => {
+            card.reveal();
+        });
+
+        playSound("reveal");
+    });
+
+
+/* =========================================================
+   NEW CARDS
+   ========================================================= */
+
+document
+    .getElementById("shuffleBtn")
+    .addEventListener("click", () => {
+
+        createCards();
+
+        playSound();
+
+        lottery.animate(
+            [
+                {
+                    opacity: 0,
+                    transform: "translateY(10px) scale(.98)"
+                },
+                {
+                    opacity: 1,
+                    transform: "translateY(0) scale(1)"
+                }
+            ],
+            {
+                duration: 450,
+                easing: "cubic-bezier(.2,.8,.2,1)"
+            }
+        );
+    });
+
+
+/* =========================================================
+   3D TILT
+   ========================================================= */
+
+lottery.addEventListener(
+    "pointermove",
+    event => {
+
+        if (
+            state.reducedMotion ||
+            window.innerWidth < 700 ||
+            document.body.classList.contains("scratching")
+        ) return;
+
+        const rect =
+            lottery.getBoundingClientRect();
+
+        const x =
+            (event.clientX - rect.left) /
+            rect.width -
+            .5;
+
+        const y =
+            (event.clientY - rect.top) /
+            rect.height -
+            .5;
+
+        const rotateY = x * 5;
+        const rotateX = -y * 5;
+
+        lottery.style.transform =
+            `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    }
+);
+
+
+lottery.addEventListener(
+    "pointerleave",
+    () => {
+
+        lottery.style.transform =
+            "rotateX(0deg) rotateY(0deg)";
+    }
+);
+
+
+/* =========================================================
+   PANELS
+   ========================================================= */
+
+function openPanel(panel) {
+
+    overlay.classList.add("open");
+    panel.classList.add("open");
+}
+
+
+function closePanels() {
+
+    overlay.classList.remove("open");
+    settingsPanel.classList.remove("open");
+    favouritesPanel.classList.remove("open");
+}
+
+
+document
+    .getElementById("settingsBtn")
+    .addEventListener("click", () => {
+
+        openPanel(settingsPanel);
+        playSound();
+    });
+
+
+document
+    .getElementById("closeSettings")
+    .addEventListener("click", closePanels);
+
+
+document
+    .getElementById("favouritesBtn")
+    .addEventListener("click", () => {
+
+        updateFavourites();
+
+        openPanel(favouritesPanel);
+
+        playSound();
+    });
+
+
+document
+    .getElementById("closeFavourites")
+    .addEventListener("click", closePanels);
+
+
+overlay.addEventListener(
+    "click",
+    closePanels
+);
+
+
+/* =========================================================
+   FAVOURITES
+   ========================================================= */
+
+function updateFavourites() {
+
+    favouritesList.innerHTML = "";
+
+    if (!state.favourites.length) {
+
+        favouritesList.innerHTML = `
+            <div class="favourite-item">
+                nothing saved yet ♡
+            </div>
+        `;
+
+        return;
+    }
+
+    state.favourites.forEach(message => {
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "favourite-item";
+
+        item.textContent = message;
+
+        favouritesList.appendChild(item);
+    });
+}
+
+
+/* =========================================================
+   SETTINGS TOGGLES
+   ========================================================= */
+
+function updateToggles() {
+
+    petalsToggle.classList.toggle(
+        "active",
+        state.petals
+    );
+
+    soundToggle.classList.toggle(
+        "active",
+        state.sound
+    );
+
+    motionToggle.classList.toggle(
+        "active",
+        state.reducedMotion
+    );
+
+    document.body.classList.toggle(
+        "reduced-motion",
+        state.reducedMotion
+    );
+}
+
+
+petalsToggle.addEventListener(
+    "click",
+    () => {
+
+        state.petals = !state.petals;
+
+        updateToggles();
+        saveState();
+
+        if (state.petals) {
+            startPetals();
+        } else {
+            document.getElementById(
+                "petals"
+            ).innerHTML = "";
+        }
+
+        playSound();
+    }
+);
+
+
+soundToggle.addEventListener(
+    "click",
+    () => {
+
+        state.sound = !state.sound;
+
+        updateToggles();
+        saveState();
+
+        if (state.sound) {
+            playSound();
+        }
+    }
+);
+
+
+motionToggle.addEventListener(
+    "click",
+    () => {
+
+        state.reducedMotion =
+            !state.reducedMotion;
+
+        updateToggles();
+        saveState();
+
+        playSound();
+    }
+);
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+document
+    .getElementById("resetBtn")
+    .addEventListener("click", () => {
+
+        state.revealed = 0;
+
+        saveState();
+        updateCounter();
+
+        createCards();
+
+        closePanels();
+
+        playSound();
+    });
+
+
+/* =========================================================
+   CLEAR FAVOURITES
+   ========================================================= */
+
+document
+    .getElementById("clearFavsBtn")
+    .addEventListener("click", () => {
+
+        state.favourites = [];
+
+        saveState();
+
+        updateFavourites();
+
+        document
+            .querySelectorAll(".favourite")
+            .forEach(button => {
+
+                button.classList.remove("saved");
+                button.textContent = "♡";
+            });
+
+        playSound();
+    });
+
+
+/* =========================================================
+   PETALS
+   ========================================================= */
+
+function createPetal() {
+
+    if (!state.petals || state.reducedMotion) {
+        return;
+    }
+
+    const container =
+        document.getElementById("petals");
+
+    const petal =
+        document.createElement("div");
+
+    petal.className = "petal";
+
+    petal.style.left =
+        `${Math.random() * 100}%`;
+
+    petal.style.setProperty(
+        "--drift",
+        `${(Math.random() - .5) * 220}px`
+    );
+
+    const duration =
+        7 + Math.random() * 7;
+
+    petal.style.animationDuration =
+        `${duration}s`;
+
+    petal.style.transform =
+        `rotate(${Math.random() * 360}deg)`;
+
+    container.appendChild(petal);
+
+    setTimeout(
+        () => petal.remove(),
+        duration * 1000
+    );
+}
+
+
+let petalInterval;
+
+
+function startPetals() {
+
+    clearInterval(petalInterval);
+
+    if (!state.petals || state.reducedMotion) {
+        return;
+    }
+
+    petalInterval =
+        setInterval(createPetal, 850);
+}
+
+
+/* =========================================================
+   KEYBOARD
+   ========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (event.key === "Escape") {
+            closePanels();
+        }
+    }
+);
+
+
+/* =========================================================
+   INITIALISE
+   ========================================================= */
+
+updateToggles();
+updateCounter();
+updateFavourites();
+createCards();
+startPetals();
+
+</script>
+
+</body>
+</html>
