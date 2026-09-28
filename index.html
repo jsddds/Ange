@@ -5,1170 +5,1993 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Love lottery ♡</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap');
-
-:root {
-    --pink: #e98ba9;
-    --pink-dark: #c95f82;
-    --pink-light: #fff1f5;
-    --white: #fffdfd;
-    --text: #38232b;
-    --muted: #96747f;
-    --glass: rgba(255,255,255,.68);
-    --shadow: 0 30px 80px rgba(153, 63, 91, .16);
+:root{
+    --pink:#ff6f9f;
+    --pink-light:#ffd6e4;
+    --pink-soft:#fff0f5;
+    --pink-dark:#d94d7d;
+    --white:#fff;
+    --text:#442b35;
+    --muted:#9b7885;
+    --shadow:0 20px 60px rgba(210,91,130,.16);
 }
 
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
-html,
-body {
-    margin: 0;
-    min-height: 100%;
+html,body{
+    margin:0;
+    min-height:100%;
 }
 
-body {
-    font-family: "DM Sans", sans-serif;
-    color: var(--text);
+body{
+    font-family:"DM Sans",sans-serif;
+    color:var(--text);
     background:
-        radial-gradient(circle at 15% 15%, rgba(255,255,255,.95), transparent 28%),
-        radial-gradient(circle at 85% 20%, rgba(255,206,220,.65), transparent 30%),
-        linear-gradient(135deg, #fff8fa 0%, #ffe8ef 45%, #fff7f9 100%);
-    overflow-x: hidden;
+        radial-gradient(circle at 15% 15%,rgba(255,182,210,.35),transparent 30%),
+        radial-gradient(circle at 85% 10%,rgba(255,213,226,.45),transparent 30%),
+        linear-gradient(135deg,#fff8fb,#fff0f5 50%,#fff9fc);
+    overflow-x:hidden;
 }
 
-body.scratching {
-    overflow: hidden;
-    touch-action: none;
+button{
+    font:inherit;
 }
 
-button {
-    font: inherit;
+button,
+canvas,
+.card{
+    -webkit-user-select:none;
+    user-select:none;
 }
 
-button:focus-visible {
-    outline: 2px solid var(--pink-dark);
-    outline-offset: 3px;
+button{
+    border:0;
+    cursor:pointer;
 }
 
-/* ---------- BACKGROUND ---------- */
-
-.background {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: 0;
+.page{
+    width:min(1180px,calc(100% - 36px));
+    margin:auto;
+    padding:30px 0 70px;
+    position:relative;
+    z-index:2;
 }
 
-.glow {
-    position: absolute;
-    width: 420px;
-    height: 420px;
-    border-radius: 50%;
-    filter: blur(70px);
-    opacity: .35;
+/* =========================
+   TOP BAR
+========================= */
+
+.topbar{
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    height:50px;
+    position:relative;
+    z-index:50;
 }
 
-.glow.one {
-    top: -180px;
-    left: -130px;
-    background: #ffd1df;
+.menu-wrap{
+    position:relative;
 }
 
-.glow.two {
-    right: -180px;
-    bottom: -150px;
-    background: #f7b4c9;
+.menu-btn{
+    width:48px;
+    height:48px;
+    border-radius:16px;
+    background:rgba(255,255,255,.78);
+    box-shadow:0 10px 30px rgba(190,75,115,.12);
+    color:var(--pink-dark);
+    font-size:22px;
+    transition:.25s ease;
+    backdrop-filter:blur(12px);
 }
 
-.petals {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 20;
-    overflow: hidden;
+.menu-btn:hover{
+    transform:translateY(-2px) rotate(2deg);
+    box-shadow:0 14px 35px rgba(190,75,115,.18);
 }
 
-.petal {
-    position: absolute;
-    top: -40px;
-    width: 10px;
-    height: 15px;
-    border-radius: 80% 20% 80% 20%;
-    background: rgba(229, 125, 155, .32);
-    animation: fall linear forwards;
+.menu-btn:active{
+    transform:scale(.94);
 }
 
-@keyframes fall {
-    to {
-        transform: translate3d(var(--drift), 110vh, 0) rotate(420deg);
-        opacity: 0;
+.menu{
+    position:absolute;
+    right:0;
+    top:58px;
+    width:250px;
+    padding:10px;
+    border-radius:22px;
+    background:rgba(255,255,255,.96);
+    box-shadow:0 25px 70px rgba(173,65,105,.2);
+    border:1px solid rgba(255,255,255,.9);
+    backdrop-filter:blur(20px);
+    opacity:0;
+    transform:translateY(-8px) scale(.96);
+    pointer-events:none;
+    transition:.2s ease;
+}
+
+.menu.open{
+    opacity:1;
+    transform:translateY(0) scale(1);
+    pointer-events:auto;
+}
+
+.menu-item{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:13px 12px;
+    border-radius:14px;
+    background:transparent;
+    color:var(--text);
+    text-align:left;
+    transition:.2s;
+}
+
+.menu-item:hover{
+    background:var(--pink-soft);
+}
+
+.menu-label{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    font-size:14px;
+}
+
+.toggle{
+    width:40px;
+    height:23px;
+    border-radius:20px;
+    background:#eadde2;
+    padding:3px;
+    transition:.25s;
+}
+
+.toggle span{
+    display:block;
+    width:17px;
+    height:17px;
+    border-radius:50%;
+    background:white;
+    box-shadow:0 2px 5px rgba(0,0,0,.12);
+    transition:.25s;
+}
+
+.toggle.active{
+    background:var(--pink);
+}
+
+.toggle.active span{
+    transform:translateX(17px);
+}
+
+.menu-divider{
+    height:1px;
+    background:#f2e4e9;
+    margin:6px 4px;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+    text-align:center;
+    max-width:760px;
+    margin:30px auto 45px;
+}
+
+.eyebrow{
+    color:var(--pink-dark);
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:3px;
+    margin-bottom:13px;
+}
+
+h1{
+    margin:0;
+    font-family:"Playfair Display",serif;
+    font-size:clamp(44px,7vw,78px);
+    line-height:.95;
+    font-weight:500;
+    letter-spacing:-2px;
+}
+
+h1 em{
+    color:var(--pink);
+}
+
+.hero-heart{
+    display:inline-block;
+    animation:heartFloat 2.7s ease-in-out infinite;
+}
+
+@keyframes heartFloat{
+    0%,100%{transform:translateY(0) rotate(-4deg)}
+    50%{transform:translateY(-7px) rotate(4deg)}
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:25px;
+    perspective:1400px;
+}
+
+.card{
+    position:relative;
+    min-height:410px;
+    border-radius:30px;
+    background:rgba(255,255,255,.78);
+    border:1px solid rgba(255,255,255,.9);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    transform-style:preserve-3d;
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+    will-change:transform;
+}
+
+.card:hover{
+    box-shadow:0 28px 75px rgba(210,91,130,.22);
+}
+
+.card-inner{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:35px;
+    text-align:center;
+    transform:translateZ(35px);
+    pointer-events:none;
+}
+
+.card-number{
+    position:absolute;
+    top:22px;
+    left:24px;
+    font-size:12px;
+    font-weight:700;
+    color:#d99aae;
+    letter-spacing:2px;
+}
+
+.card-icon{
+    width:66px;
+    height:66px;
+    display:grid;
+    place-items:center;
+    border-radius:22px;
+    background:var(--pink-soft);
+    color:var(--pink);
+    font-size:28px;
+    margin-bottom:25px;
+    box-shadow:inset 0 0 0 1px rgba(255,111,159,.08);
+}
+
+.message{
+    font-family:"Playfair Display",serif;
+    font-style:italic;
+    font-size:22px;
+    line-height:1.45;
+    color:#53343f;
+}
+
+.fav-btn{
+    pointer-events:auto;
+    margin-top:25px;
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#fff;
+    color:#dca3b4;
+    box-shadow:0 8px 20px rgba(150,70,100,.1);
+    transition:.2s;
+}
+
+.fav-btn:hover{
+    transform:scale(1.1);
+}
+
+.fav-btn.active{
+    color:var(--pink);
+    background:#fff0f5;
+}
+
+/* =========================
+   SCRATCH CANVAS
+========================= */
+
+.scratch-layer{
+    position:absolute;
+    inset:0;
+
+    /* FORCE THE SCRATCH SURFACE TO MATCH THE CARD */
+    width:100%;
+    height:100%;
+    display:block;
+
+    /* Match the card shape exactly */
+    border-radius:inherit;
+
+    z-index:10;
+    cursor:crosshair;
+
+    /* Prevent dragging / scrolling while scratching */
+    touch-action:none;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+
+    pointer-events:auto;
+}
+
+.scratch-layer.revealed{
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .45s ease;
+}
+
+.card.revealed .scratch-layer{
+    opacity:0;
+    pointer-events:none;
+}
+
+/* =========================
+   BOTTOM CONTROLS
+========================= */
+
+.controls{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:30px;
+}
+
+.action{
+    padding:13px 19px;
+    border-radius:16px;
+    background:#fff;
+    color:var(--pink-dark);
+    box-shadow:0 10px 25px rgba(190,75,115,.1);
+    font-weight:600;
+    transition:.2s;
+}
+
+.action:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 32px rgba(190,75,115,.16);
+}
+
+.action.primary{
+    background:var(--pink);
+    color:#fff;
+}
+
+.action:active{
+    transform:scale(.96);
+}
+
+/* =========================
+   FAVOURITES
+========================= */
+
+.favourites{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(77,37,50,.2);
+    backdrop-filter:blur(8px);
+    opacity:0;
+    pointer-events:none;
+    transition:.25s;
+}
+
+.favourites.open{
+    opacity:1;
+    pointer-events:auto;
+}
+
+.fav-panel{
+    width:min(650px,100%);
+    max-height:80vh;
+    overflow:auto;
+    background:#fff;
+    border-radius:28px;
+    padding:28px;
+    box-shadow:0 30px 100px rgba(100,35,60,.25);
+    transform:translateY(15px) scale(.97);
+    transition:.25s;
+}
+
+.favourites.open .fav-panel{
+    transform:translateY(0) scale(1);
+}
+
+.panel-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.panel-head h2{
+    margin:0;
+    font-family:"Playfair Display",serif;
+    font-weight:500;
+}
+
+.close-btn{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:var(--pink-soft);
+    color:var(--pink-dark);
+}
+
+.fav-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.fav-item{
+    padding:16px;
+    border-radius:17px;
+    background:#fff7fa;
+    font-family:"Playfair Display",serif;
+    font-style:italic;
+    line-height:1.4;
+}
+
+/* =========================
+   PETALS
+========================= */
+
+.petals{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    z-index:1;
+}
+
+.petal{
+    position:absolute;
+    top:-30px;
+    width:12px;
+    height:17px;
+    border-radius:70% 30% 70% 30%;
+    background:rgba(255,135,174,.35);
+    animation:fall linear forwards;
+}
+
+@keyframes fall{
+    to{
+        transform:translate3d(var(--x),110vh,0) rotate(720deg);
     }
 }
 
-/* ---------- APP ---------- */
+/* =========================
+   HEART BURST
+========================= */
 
-.app {
-    position: relative;
-    z-index: 2;
-    width: min(100%, 1050px);
-    margin: auto;
-    padding: 30px 20px 70px;
+.burst-heart{
+    position:fixed;
+    pointer-events:none;
+    z-index:200;
+    font-size:18px;
+    animation:burst 900ms ease-out forwards;
 }
 
-/* ---------- TOP BAR ---------- */
-
-.topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 35px;
-}
-
-.brand {
-    font-family: "Playfair Display", serif;
-    font-size: 18px;
-    font-style: italic;
-    color: var(--pink-dark);
-}
-
-.top-actions {
-    display: flex;
-    gap: 9px;
-}
-
-.icon-btn {
-    width: 43px;
-    height: 43px;
-    border: 1px solid rgba(201,95,130,.13);
-    background: rgba(255,255,255,.58);
-    backdrop-filter: blur(14px);
-    border-radius: 50%;
-    color: var(--pink-dark);
-    cursor: pointer;
-    transition: .25s ease;
-    display: grid;
-    place-items: center;
-    font-size: 17px;
-}
-
-.icon-btn:hover {
-    transform: translateY(-2px);
-    background: white;
-    box-shadow: 0 8px 25px rgba(201,95,130,.12);
-}
-
-/* ---------- HERO ---------- */
-
-.hero {
-    text-align: center;
-    margin-bottom: 42px;
-}
-
-.eyebrow {
-    color: var(--pink-dark);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    font-weight: 700;
-    margin-bottom: 12px;
-}
-
-h1 {
-    margin: 0;
-    font-family: "Playfair Display", serif;
-    font-size: clamp(48px, 9vw, 86px);
-    line-height: .95;
-    font-weight: 500;
-    letter-spacing: -3px;
-}
-
-.subtitle {
-    margin: 14px 0 0;
-    color: var(--muted);
-    font-family: "Playfair Display", serif;
-    font-style: italic;
-    font-size: 17px;
-}
-
-/* ---------- LOTTERY ---------- */
-
-.lottery-wrap {
-    perspective: 1400px;
-    display: flex;
-    justify-content: center;
-}
-
-.lottery {
-    width: min(100%, 720px);
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform .2s ease;
-}
-
-.ticket {
-    position: relative;
-    background:
-        linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,246,249,.96));
-    border: 1px solid rgba(255,255,255,.9);
-    border-radius: 35px;
-    padding: 15px;
-    box-shadow:
-        0 45px 100px rgba(116,43,68,.14),
-        inset 0 1px 0 rgba(255,255,255,.9);
-    transform-style: preserve-3d;
-}
-
-.ticket-inner {
-    border: 1px solid rgba(220,128,154,.18);
-    border-radius: 25px;
-    padding: 38px 30px 32px;
-    position: relative;
-    overflow: hidden;
-}
-
-.ticket-inner::before,
-.ticket-inner::after {
-    content: "";
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-}
-
-.ticket-inner::before {
-    width: 170px;
-    height: 170px;
-    top: -110px;
-    right: -50px;
-    background: rgba(255,198,215,.35);
-}
-
-.ticket-inner::after {
-    width: 140px;
-    height: 140px;
-    bottom: -100px;
-    left: -45px;
-    background: rgba(255,219,228,.45);
-}
-
-.rose {
-    position: absolute;
-    font-size: 70px;
-    opacity: .12;
-    pointer-events: none;
-}
-
-.rose.one {
-    top: 5px;
-    left: 20px;
-    transform: rotate(-18deg);
-}
-
-.rose.two {
-    right: 20px;
-    bottom: -5px;
-    transform: rotate(20deg);
-}
-
-/* ---------- SCRATCH CARDS ---------- */
-
-.cards {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    position: relative;
-    z-index: 3;
-}
-
-.card {
-    position: relative;
-    min-height: 250px;
-    border-radius: 22px;
-    overflow: hidden;
-    background: linear-gradient(145deg, #fff, #fff4f7);
-    border: 1px solid rgba(215,117,145,.13);
-    box-shadow: 0 14px 35px rgba(121,51,73,.09);
-    transform-style: preserve-3d;
-    transition: transform .25s ease, box-shadow .25s ease;
-}
-
-.card:hover {
-    box-shadow: 0 22px 45px rgba(121,51,73,.13);
-}
-
-.message {
-    position: absolute;
-    inset: 0;
-    padding: 28px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    flex-direction: column;
-    background:
-        radial-gradient(circle at 20% 20%, rgba(255,213,225,.4), transparent 35%),
-        linear-gradient(145deg, #fffdfd, #fff0f5);
-}
-
-.message .heart {
-    color: var(--pink);
-    font-size: 31px;
-    margin-bottom: 14px;
-    animation: heartbeat 1.8s ease-in-out infinite;
-}
-
-.message p {
-    margin: 0;
-    font-family: "Playfair Display", serif;
-    font-size: 18px;
-    line-height: 1.45;
-    max-width: 220px;
-}
-
-@keyframes heartbeat {
-    0%, 100% { transform: scale(1); }
-    15% { transform: scale(1.13); }
-    30% { transform: scale(1); }
-}
-
-.scratch {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 5;
-    cursor: crosshair;
-    touch-action: none;
-}
-
-.card.revealed .scratch {
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity .45s ease;
-}
-
-.card.revealed {
-    animation: revealCard .55s cubic-bezier(.2,.8,.2,1);
-}
-
-@keyframes revealCard {
-    0% {
-        transform: scale(.97) rotateX(4deg);
+@keyframes burst{
+    0%{
+        opacity:1;
+        transform:translate(-50%,-50%) scale(.5);
     }
-    100% {
-        transform: scale(1) rotateX(0);
-    }
-}
-
-/* ---------- BOTTOM ---------- */
-
-.ticket-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 25px;
-    gap: 15px;
-}
-
-.counter {
-    color: var(--muted);
-    font-size: 13px;
-}
-
-.action-row {
-    display: flex;
-    gap: 10px;
-}
-
-.main-btn {
-    border: 0;
-    background: var(--pink);
-    color: white;
-    padding: 13px 22px;
-    border-radius: 999px;
-    cursor: pointer;
-    font-weight: 600;
-    box-shadow: 0 10px 25px rgba(201,95,130,.22);
-    transition: .25s ease;
-}
-
-.main-btn:hover {
-    transform: translateY(-2px);
-    background: var(--pink-dark);
-    box-shadow: 0 15px 32px rgba(201,95,130,.28);
-}
-
-.secondary-btn {
-    border: 1px solid rgba(201,95,130,.16);
-    background: rgba(255,255,255,.75);
-    color: var(--pink-dark);
-    padding: 12px 18px;
-    border-radius: 999px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: .25s ease;
-}
-
-.secondary-btn:hover {
-    background: white;
-    transform: translateY(-2px);
-}
-
-/* ---------- FAVOURITE ---------- */
-
-.favourite {
-    position: absolute;
-    right: 13px;
-    top: 13px;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    border: 1px solid rgba(201,95,130,.13);
-    background: rgba(255,255,255,.8);
-    color: #d68ba2;
-    cursor: pointer;
-    z-index: 10;
-    opacity: 0;
-    transition: .2s ease;
-}
-
-.card.revealed .favourite {
-    opacity: 1;
-}
-
-.favourite.saved {
-    color: #d94c7a;
-    background: #fff0f5;
-}
-
-/* ---------- SETTINGS ---------- */
-
-.overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(56,35,43,.2);
-    backdrop-filter: blur(8px);
-    z-index: 50;
-    opacity: 0;
-    pointer-events: none;
-    transition: .3s ease;
-}
-
-.overlay.open {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.panel {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: min(390px, 92vw);
-    height: 100%;
-    background: rgba(255,250,252,.96);
-    backdrop-filter: blur(30px);
-    z-index: 60;
-    padding: 30px;
-    box-shadow: -20px 0 70px rgba(78,27,46,.15);
-    transform: translateX(105%);
-    transition: transform .4s cubic-bezier(.2,.8,.2,1);
-    overflow-y: auto;
-}
-
-.panel.open {
-    transform: translateX(0);
-}
-
-.panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 35px;
-}
-
-.panel h2 {
-    font-family: "Playfair Display", serif;
-    font-size: 29px;
-    font-weight: 500;
-    margin: 0;
-}
-
-.setting {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    padding: 19px 0;
-    border-bottom: 1px solid rgba(201,95,130,.1);
-}
-
-.setting-text strong {
-    display: block;
-    font-size: 14px;
-}
-
-.setting-text span {
-    display: block;
-    color: var(--muted);
-    font-size: 12px;
-    margin-top: 4px;
-}
-
-.toggle {
-    width: 46px;
-    height: 26px;
-    border-radius: 999px;
-    background: #e7d4da;
-    position: relative;
-    border: 0;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-.toggle::after {
-    content: "";
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    width: 18px;
-    height: 18px;
-    background: white;
-    border-radius: 50%;
-    transition: .25s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,.12);
-}
-
-.toggle.active {
-    background: var(--pink);
-}
-
-.toggle.active::after {
-    transform: translateX(20px);
-}
-
-.panel-section {
-    margin-top: 30px;
-}
-
-.panel-section h3 {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--pink-dark);
-    margin-bottom: 14px;
-}
-
-.full-btn {
-    width: 100%;
-    margin-top: 9px;
-}
-
-/* ---------- FAVOURITES PANEL ---------- */
-
-.favourites-list {
-    display: grid;
-    gap: 10px;
-}
-
-.favourite-item {
-    padding: 15px;
-    border-radius: 15px;
-    background: white;
-    border: 1px solid rgba(201,95,130,.1);
-    font-family: "Playfair Display", serif;
-    font-size: 15px;
-    line-height: 1.4;
-}
-
-/* ---------- HEART BURST ---------- */
-
-.heart-burst {
-    position: fixed;
-    pointer-events: none;
-    z-index: 100;
-    font-size: 18px;
-    animation: burst 1s ease forwards;
-}
-
-@keyframes burst {
-    0% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(.5);
-    }
-
-    100% {
-        opacity: 0;
+    100%{
+        opacity:0;
         transform:
             translate(
-                calc(-50% + var(--x)),
-                calc(-50% + var(--y))
+                calc(-50% + var(--bx)),
+                calc(-50% + var(--by))
             )
-            scale(1.2)
-            rotate(var(--r));
+            scale(1.35)
+            rotate(var(--rot));
     }
 }
 
-/* ---------- REDUCED MOTION ---------- */
+/* =========================
+   MOBILE
+========================= */
 
-body.reduced-motion *,
-body.reduced-motion *::before,
-body.reduced-motion *::after {
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: .01ms !important;
+@media(max-width:850px){
+    .cards{
+        grid-template-columns:1fr;
+        max-width:520px;
+        margin:auto;
+    }
+
+    .card{
+        min-height:360px;
+    }
+
+    .hero{
+        margin-top:20px;
+    }
 }
 
-/* ---------- MOBILE ---------- */
-
-@media (max-width: 700px) {
-
-    .app {
-        padding: 20px 13px 45px;
+@media(prefers-reduced-motion:reduce){
+    *{
+        scroll-behavior:auto!important;
     }
+}
 
-    .topbar {
-        margin-bottom: 25px;
-    }
-
-    h1 {
-        font-size: 55px;
-    }
-
-    .hero {
-        margin-bottom: 28px;
-    }
-
-    .ticket {
-        padding: 8px;
-        border-radius: 25px;
-    }
-
-    .ticket-inner {
-        padding: 20px 12px 20px;
-        border-radius: 19px;
-    }
-
-    .cards {
-        grid-template-columns: 1fr;
-    }
-
-    .card {
-        min-height: 190px;
-    }
-
-    .message p {
-        font-size: 17px;
-    }
-
-    .ticket-footer {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .counter {
-        text-align: center;
-    }
-
-    .action-row {
-        justify-content: center;
-    }
+/* User setting */
+body.reduce-motion *,
+body.reduce-motion *::before,
+body.reduce-motion *::after{
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.001ms!important;
 }
 </style>
 </head>
 
 <body>
 
-<div class="background">
-    <div class="glow one"></div>
-    <div class="glow two"></div>
-</div>
-
 <div class="petals" id="petals"></div>
 
-<div class="app">
+<div class="page">
 
-    <header class="topbar">
-        <div class="brand">coded by ur maid</div>
+    <div class="topbar">
+        <div class="menu-wrap">
 
-        <div class="top-actions">
-            <button class="icon-btn" id="favouritesBtn" aria-label="Favourites">♡</button>
-            <button class="icon-btn" id="settingsBtn" aria-label="Settings">⚙</button>
-        </div>
-    </header>
+            <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+                ☰
+            </button>
 
-    <section class="hero">
-        <div class="eyebrow">just for you</div>
-        <h1>Love lottery</h1>
-        <p class="subtitle">a tiny collection of reasons i adore you</p>
-    </section>
+            <div class="menu" id="menu">
 
-    <main class="lottery-wrap">
+                <button class="menu-item" id="favouritesBtn">
+                    <span class="menu-label">
+                        ♡
+                        <span>favourites</span>
+                    </span>
+                </button>
 
-        <div class="lottery" id="lottery">
+                <div class="menu-divider"></div>
 
-            <div class="ticket">
+                <button class="menu-item" id="petalsToggle">
+                    <span class="menu-label">
+                        🌸
+                        <span>falling petals</span>
+                    </span>
+                    <span class="toggle" id="petalSwitch">
+                        <span></span>
+                    </span>
+                </button>
 
-                <div class="ticket-inner">
+                <button class="menu-item" id="soundToggle">
+                    <span class="menu-label">
+                        ♫
+                        <span>sound</span>
+                    </span>
+                    <span class="toggle" id="soundSwitch">
+                        <span></span>
+                    </span>
+                </button>
 
-                    <div class="rose one">🌹</div>
-                    <div class="rose two">🌹</div>
+                <button class="menu-item" id="motionToggle">
+                    <span class="menu-label">
+                        ✦
+                        <span>reduced motion</span>
+                    </span>
+                    <span class="toggle" id="motionSwitch">
+                        <span></span>
+                    </span>
+                </button>
 
-                    <div class="cards" id="cards"></div>
+                <div class="menu-divider"></div>
 
-                    <div class="ticket-footer">
-                        <div class="counter">
-                            <span id="revealedCount">0</span> revealed
-                        </div>
-
-                        <div class="action-row">
-                            <button class="secondary-btn" id="shuffleBtn">
-                                new ones
-                            </button>
-
-                            <button class="main-btn" id="revealBtn">
-                                reveal all ♡
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
+                <button class="menu-item" id="resetBtn">
+                    <span class="menu-label">
+                        ↻
+                        <span>reset lottery</span>
+                    </span>
+                </button>
 
             </div>
-
         </div>
+    </div>
 
-    </main>
+    <section class="hero">
+        <div class="eyebrow">a little something for you</div>
+
+        <h1>
+            Love lottery
+            <span class="hero-heart">♡</span>
+        </h1>
+    </section>
+
+    <main class="cards" id="cards"></main>
+
+    <div class="controls">
+        <button class="action primary" id="shuffleBtn">
+            new ones ♡
+        </button>
+
+        <button class="action" id="revealBtn">
+            reveal all
+        </button>
+    </div>
 
 </div>
-
-
-<!-- SETTINGS -->
-
-<div class="overlay" id="overlay"></div>
-
-<aside class="panel" id="settingsPanel">
-
-    <div class="panel-header">
-        <h2>settings</h2>
-        <button class="icon-btn" id="closeSettings">×</button>
-    </div>
-
-    <div class="setting">
-        <div class="setting-text">
-            <strong>Falling petals</strong>
-            <span>little flowers in the background</span>
-        </div>
-        <button class="toggle active" id="petalsToggle"></button>
-    </div>
-
-    <div class="setting">
-        <div class="setting-text">
-            <strong>Sounds</strong>
-            <span>tiny sounds when you interact</span>
-        </div>
-        <button class="toggle active" id="soundToggle"></button>
-    </div>
-
-    <div class="setting">
-        <div class="setting-text">
-            <strong>Reduced motion</strong>
-            <span>less movement and animation</span>
-        </div>
-        <button class="toggle" id="motionToggle"></button>
-    </div>
-
-    <div class="panel-section">
-
-        <h3>your lottery</h3>
-
-        <button class="secondary-btn full-btn" id="resetBtn">
-            reset revealed cards
-        </button>
-
-        <button class="secondary-btn full-btn" id="clearFavsBtn">
-            clear favourites
-        </button>
-
-    </div>
-
-</aside>
-
 
 <!-- FAVOURITES -->
 
-<aside class="panel" id="favouritesPanel">
+<div class="favourites" id="favourites">
+    <div class="fav-panel">
 
-    <div class="panel-header">
-        <h2>favourites</h2>
-        <button class="icon-btn" id="closeFavourites">×</button>
+        <div class="panel-head">
+            <h2>your favourites ♡</h2>
+            <button class="close-btn" id="closeFav">×</button>
+        </div>
+
+        <div class="fav-list" id="favList"></div>
+
     </div>
-
-    <div class="favourites-list" id="favouritesList"></div>
-
-</aside>
-
+</div>
 
 <script>
+
 /* =========================================================
-   LOVE LOTTERY
-   Everything is contained in this one file.
+   1000 UNIQUE MESSAGES
    ========================================================= */
 
 const messages = [
 
-    "i still get stupidly happy when i see your name pop up.",
-
-    "you somehow make ordinary days feel special.",
-
-    "i would choose you in every universe.",
-
-    "you are my favourite notification.",
-
-    "i love the little things you do that you probably don't even notice.",
-
-    "being around you makes everything feel softer.",
-
-    "you make me smile like an idiot.",
-
-    "i could listen to you talk for hours.",
-
-    "you are ridiculously easy to adore.",
-
-    "i hope you know how important you are to me.",
-
-    "you make my heart do that embarrassing little thing.",
-
-    "i love having you in my life.",
-
-    "somehow you became my favourite person.",
-
-    "i would still pick you even if the lottery had a million prizes.",
-
-    "you make me want to be a better person.",
-
-    "i love your existence. yes, literally your existence.",
-
-    "you are the plot twist i actually wanted.",
-
-    "you make my day better without even trying.",
-
-    "i love every random conversation we have.",
-
-    "you deserve flowers for absolutely no reason.",
-
-    "i'm keeping you. sorry, no refunds.",
-
-    "you have permanently occupied a ridiculous amount of my thoughts.",
-
-    "i hope i never get used to how lucky i feel to have you.",
-
-    "you are one of my favourite parts of every day.",
-
-    "i love when you get excited about something.",
-
-    "your happiness matters to me more than you probably realise.",
-
-    "you make even doing nothing together feel like something.",
-
-    "i'd save the last slice for you. probably.",
-
-    "you are very, very loved.",
-
-    "i'm suspicious of how easily you make me smile.",
-
-    "you are my favourite person to annoy.",
-
-    "i like you an unreasonable amount.",
-
-    "you somehow make my brain forget how to behave.",
-
-    "if loving you was a full-time job, i'd happily work overtime.",
-
-    "you make my world feel a little prettier.",
-
-    "i love the way you make me feel safe being myself.",
-
-    "you are worth all the cheesy messages in the world.",
-
-    "i'd choose another day with you over a thousand boring perfect ones.",
-
-    "you are genuinely one of the best things that happened to me.",
-
-    "i love knowing that somewhere in this world, you exist.",
-
-    "you are cute. unfortunately, this is now permanent.",
-
-    "i hope this little card made you smile.",
-
-    "i love you more than this tiny website can fit.",
-
-    "you're stuck with me now ♡",
-
-    "i'm very grateful that you're you.",
-
-    "you make my heart feel ridiculously full.",
-
-    "if i had to pick one person to spend a completely random Tuesday with, i'd pick you.",
-
-    "you make everything feel a little more like home.",
-
-    "i adore you. that's the whole card.",
-
-    "you are my favourite kind of distraction.",
-
-    "i love hearing your thoughts, even the completely random ones.",
-
-    "you deserve to be reminded how loved you are.",
-
-    "i'd keep finding you in every version of this life.",
-
-    "you make me excited about little things.",
-
-    "my favourite place is wherever i'm laughing with you.",
-
-    "you are incredibly precious to me.",
-
-    "i love the person you are.",
-
-    "you're allowed to be proud of yourself. i'm already proud of you.",
-
-    "i hope you always know you can be yourself with me.",
-
-    "you're my favourite human. statistically, emotionally, scientifically.",
-
-    "i would absolutely pick you again.",
-
-    "you're basically my favourite little miracle.",
-
-    "thank you for existing at the exact same time as me.",
-
-    "you make my heart very inconveniently happy.",
-
-    "i love you. annoyingly much.",
-
-    "you make my life better just by being in it.",
-
-    "i hope today treats you as kindly as you deserve.",
-
-    "there is a suspicious amount of love hidden inside this website.",
-
-    "this card contains one certified fact: you're adorable.",
-
-    "i'm glad i get to know you.",
-
-    "you make me want to collect tiny memories with you forever.",
-
-    "i love every version of you.",
-
-    "you are worth celebrating on completely normal days.",
-
-    "you're my favourite person to think about.",
-
-    "i'd still choose you after reading every possible option.",
-
-    "you are absolutely worth the ridiculous amount of pink on this screen.",
-
-    "you make me feel lucky.",
-
-    "you're one of those people i never want to lose.",
-
-    "i love your little habits.",
-
-    "you have a permanent reservation in my heart.",
-
-    "you make my days more interesting.",
-
-    "i hope you know that you matter.",
-
-    "you make me happier than you probably realise.",
-
-    "i love being able to call you mine.",
-
-    "you are my favourite person to make memories with.",
-
-    "you make me want to romanticise absolutely everything.",
-
-    "you are the reason this website exists.",
-
-    "yes, i made an entire lottery because apparently one love letter wasn't enough.",
-
-    "you won. obviously.",
-
-    "jackpot: me loving you.",
-
-    "rare prize unlocked: one extremely loved girlfriend.",
-
-    "congratulations. you are still my favourite.",
-
-    "breaking news: i adore you.",
-
-    "limited edition girlfriend. no restocks.",
-
-    "100% authentic affection. no preservatives.",
-
-    "this message has been personally approved by my heart.",
-
-    "you've won today's grand prize: another reminder that i love you.",
-
-    "the odds of me loving you were somehow 100%.",
-
-    "surprise! it's me being obsessed with how lovely you are.",
-
-    "you found the secret prize: a stupidly happy boyfriend.",
-
-    "your prize is knowing someone thinks you're wonderful.",
-
-    "this lottery has one rule: you always win.",
-
-    "official result: still completely in love with you.",
-
-    "you have successfully collected another reason to smile.",
-
-    "i hope you keep this one.",
-
-    "consider this your daily reminder that you're loved.",
-
-    "i'd give you the whole jackpot.",
-
-    "you are worth more than every fake million-dollar prize combined."
+"i'd still pick you even if the lottery had a million choices",
+"somehow you make ordinary days feel like something worth keeping",
+"you are definitely my favourite notification",
+"i hope you know how ridiculously easy you are to love",
+"if i had to choose again, i'd still choose you",
+"you make my bad days feel a little less bad",
+"you somehow make doing absolutely nothing feel fun",
+"you are my favourite person to bother",
+"life got a little sweeter when you showed up",
+"i like you an unreasonable amount and i'm not fixing it",
+"you have no idea how often you randomly cross my mind",
+"you are the plot twist i actually wanted",
+"i'd save you the last piece of dessert",
+"you make my heart do the stupid little thing",
+"if loving you was a lottery, i'd buy every ticket",
+"you are my favourite kind of distraction",
+"i could listen to you talk about random things forever",
+"you make everything feel a bit warmer",
+"you're basically my favourite part of the day",
+"i'd choose your laugh every single time",
+"you are very unfairly easy to miss",
+"i hope i never get used to having you around",
+"you make even boring conversations worth having",
+"somewhere between meeting you and now, you became my favourite",
+"you are the person i want to tell the dumbest things to",
+"i'd rather have one ordinary day with you than a perfect day without you",
+"you make my brain forget what it was supposed to be doing",
+"you are proof that good surprises exist",
+"i like the way my day feels when i know you're in it",
+"you're one of those people i could never get tired of",
+"you make me smile at my phone like an idiot",
+"i'd pick your company over almost anything",
+"you are my favourite little coincidence",
+"you make everything feel slightly more exciting",
+"i really hope you know how special you are to me",
+"you somehow became someone i never want to lose",
+"i like you more than this tiny card can explain",
+"you make my favourite memories even better",
+"if there were bonus points for being adorable, you'd win",
+"you are my favourite reason to check my phone",
+"i would absolutely rig this lottery in your favour",
+"you are the prize i wasn't even looking for",
+"you make my heart forget how to behave",
+"i like having you in my life more than i can say",
+"you make the little things feel important",
+"i'd choose another thousand days with you",
+"you're pretty much impossible not to adore",
+"you make me want to remember the smallest moments",
+"i like us. a lot.",
+"you are my favourite person to randomly think about",
+"you make happiness feel less complicated",
+"i'd keep choosing you until the tickets ran out",
+"you are the reason this lottery is obviously rigged",
+"you make my world feel a little softer",
+"i love the way you can make me laugh without even trying",
+"you are the kind of person i'd look for in every crowd",
+"you make being around you feel ridiculously natural",
+"i'd rather get stuck somewhere with you than be anywhere alone",
+"you are my favourite person to waste time with",
+"i don't need luck when i already have you",
+"you make every tiny moment feel like a memory",
+"i hope you never forget how much you mean to me",
+"you are my favourite chapter and i'm not ready for the ending",
+"you make my day better without even knowing it",
+"if i could replay one thing, i'd probably choose a random moment with you",
+"you are very easily my favourite human",
+"i'd pick you in every universe with suspiciously good accuracy",
+"you make my heart feel ridiculously full",
+"you are the person i want beside me for the random stuff",
+"i like your existence. especially when it's near mine.",
+"you make everything more fun just by being there",
+"i would absolutely share my fries with you",
+"you are worth every cheesy sentence i could possibly write",
+"you make me want to be better without asking me to",
+"i'm still not over how lucky i feel to know you",
+"you are the best kind of problem to have",
+"i could never put a price on having you in my life",
+"you are my favourite little piece of chaos",
+"you make the world feel less boring",
+"i'd choose your smile over winning the lottery",
+"you are somehow both my peace and my favourite distraction",
+"i like the person i am when i'm around you",
+"you make my heart happier than it has any right to be",
+"you're the person i'd send a completely pointless meme to",
+"i would save you a seat even if there were no seats left",
+"you make even silence feel comfortable",
+"i'm pretty sure you stole a suspiciously large part of my heart",
+"you are the one notification i never want muted",
+"you make me look forward to things i normally wouldn't",
+"i'd choose you before the ticket was even printed",
+"you are my favourite reason to smile for no reason",
+"you make everything feel a little more like home",
+"i like every version of a day that includes you",
+"you are absolutely worth being cheesy for",
+"i'd still find you if the universe shuffled everyone around",
+"you make my life more interesting in the best way",
+"you are my favourite person to accidentally spend hours talking to",
+"i hope i get to make you smile as much as you make me smile",
+"you are the best thing this lottery could possibly reveal",
+
+/* 101 */
+
+"you make random tuesdays feel suspiciously special",
+"i'd pick you even if the winning ticket was sitting right beside yours",
+"you are my favourite reason to lose track of time",
+"you somehow make my brain go quiet in the nicest way",
+"i like knowing there is someone like you in my corner",
+"you are the person i want to share stupid jokes with",
+"i'd save the weirdest story of my day just to tell you",
+"you make every conversation feel like my favourite one",
+"you are dangerously good at making me smile",
+"i'd happily spend another hundred boring afternoons with you",
+"you make my world a little brighter without trying",
+"i like your laugh more than i probably should admit",
+"you are the first person i'd look for in a room",
+"you make ordinary memories feel weirdly important",
+"i'd choose your company even if the alternative came with free pizza",
+"you are my favourite person to annoy lovingly",
+"you make me forget that i was supposed to be productive",
+"you are the kind of lucky i don't want to spend",
+"i'd keep your name in every version of my future",
+"you make small moments stick in my head",
+"i like how easily you can turn my mood around",
+"you are my favourite reason to stay up a little longer",
+"i would absolutely pick your card again",
+"you make being myself feel easy",
+"you are one of the few people who can make me laugh instantly",
+"i like the little world we make when it's just us talking",
+"you make every good thing feel even better",
+"i'd choose you even if this lottery had terrible odds",
+"you are my favourite kind of lucky",
+"you make my heart act like it has never seen a person before",
+"i'd give you the last cookie and complain about it dramatically",
+"you make every random photo ten times better",
+"i love how you can make nothing feel like something",
+"you are the person i want to celebrate tiny wins with",
+"i'd pick another conversation with you over almost any plan",
+"you make my days have better endings",
+"you are far too easy to care about",
+"i like that i can be weird around you",
+"you make the world seem a little less serious",
+"i would absolutely cheat at this lottery if necessary",
+"you are my favourite person to share completely useless information with",
+"you make me want to remember every little thing",
+"i like how your presence changes the whole mood",
+"you are the reason i understand why people write cheesy things",
+"i'd choose you even if there were fireworks involved in every other option",
+"you make my favourite moments happen accidentally",
+"you are my favourite person to have absolutely no plan with",
+"i like that you can make me laugh when i wasn't even trying to smile",
+"you make every little hello feel nice",
+"you are the person i'd want beside me when everything gets weird",
+"i would gladly lose this lottery if it meant finding you again",
+"you make my brain keep collecting memories of you",
+"you are the kind of person who makes leaving feel too soon",
+"i like having someone as wonderful as you to think about",
+"you make the boring parts of life much easier",
+"you are my favourite reason to say just one more thing",
+"i'd choose you over a lifetime supply of snacks. probably.",
+"you make my heart feel like it has somewhere to go",
+"you are my favourite person to tell good news to",
+"i like every little thing that somehow led me to you",
+"you make me want to keep the smallest memories",
+"you are the person i would choose when there are no good options",
+"i'd pick your smile even on the hardest day",
+"you make the world feel less lonely",
+"i like that you exist at the exact same time as me",
+"you are the best unexpected part of my life",
+"i'd still choose you after seeing every possible outcome",
+"you make my favourite songs hit a little differently",
+"you are the person who can make waiting feel worth it",
+"i like how you somehow make time disappear",
+"you are my favourite little thought that keeps coming back",
+"i'd choose you even if the universe tried to reroll",
+"you make every tiny joke funnier",
+"you are the person i'd want to get lost with",
+"i like that my happiest memories have you somewhere in them",
+"you make my heart ridiculously easy to impress",
+"i would absolutely keep your ticket forever",
+"you are the reason my phone screen gets smiled at",
+"i like the way you make everything feel less complicated",
+"you are my favourite person to do absolutely nothing with",
+"i'd choose you even if the prize was unlimited money",
+"you make me care about moments i would normally forget",
+"you are one of my favourite things that isn't technically a thing",
+"i like how you can turn a normal day into a good one",
+"you make my heart feel like it won something",
+"i'd rather share a bad joke with you than hear a perfect one alone",
+"you are the person i want around when i'm having a terrible day",
+"i like that i never have to force a conversation with you",
+"you make the little things worth noticing",
+"you are my favourite human-shaped plot twist",
+"i'd choose your company even if there were snacks involved elsewhere",
+"you make my world feel more colourful",
+"i like knowing i can always think of you and smile",
+"you are the reason my favourite memories keep getting longer",
+"i'd pick you again without even reading the rules",
+"you make being lucky feel very underrated",
+"you are my favourite reason to be sentimental",
+"i like that you can make me laugh with one sentence",
+"you make every day have at least one good part",
+"you are the person i would save the good seat for",
+"i'd choose you even if there were only one ticket left",
+"you make my heart feel ridiculously lucky",
+
+/* 201 */
+
+"you are my favourite person to accidentally think about all day",
+"i like how easily you make a normal moment memorable",
+"you make me want to keep every silly little memory",
+"i'd choose you before knowing what the prize was",
+"you are the person i want to tell pointless updates to",
+"you make my bad moods have a much shorter lifespan",
+"i like that your name can instantly improve my mood",
+"you are my favourite reason to be distracted",
+"i would pick your card without even checking the others",
+"you make everything feel a little more worth it",
+"you are the kind of person i never want to take for granted",
+"i like how comfortable everything feels with you",
+"you make my brain save moments it normally wouldn't",
+"i'd choose you even if i had to walk through the entire lottery machine",
+"you are my favourite person to share a look with",
+"i like how one message from you can change my whole day",
+"you make me want to tell you every tiny detail",
+"you are the easiest person to miss",
+"i'd happily replay our dumbest conversations",
+"you make even waiting for something feel less boring",
+"you are my favourite excuse to smile at nothing",
+"i like the way you make me feel understood",
+"you make ordinary places feel different just because you're there",
+"i'd choose your laugh every single time",
+"you are the person i want to make memories with accidentally",
+"i like how you can make me forget what time it is",
+"you make my favourite moments happen when i least expect them",
+"you are my favourite kind of chaos",
+"i'd still choose you if the odds were basically impossible",
+"you make my heart feel like it got a surprise upgrade",
+"i like how you make me want to share things",
+"you are the person i would pick for a completely pointless adventure",
+"i'd give you the bigger half of the dessert",
+"you make boring conversations impossible",
+"you are my favourite reason to check if my phone buzzed",
+"i like that being around you never feels like work",
+"you make me appreciate tiny moments more",
+"i'd choose you even if there were a golden ticket involved",
+"you are the person who makes me want to stay a little longer",
+"i like how naturally you fit into my favourite thoughts",
+"you make my heart laugh before i even realise it",
+"you are my favourite person to be silly with",
+"i'd choose your company over the fanciest plan",
+"you make random memories feel important",
+"i like that you can make silence feel like a conversation",
+"you are my favourite reason to look forward to tomorrow",
+"i'd still pick you if i had to start the whole lottery again",
+"you make my day better in ways you probably don't notice",
+"you are the person i want to tell when something funny happens",
+"i like how you make happiness feel effortless",
+"you make my favourite moments feel even more favourite",
+"i'd choose you even if every other card promised something shiny",
+"you are the best kind of unexpected",
+"i like that you can make me laugh without even trying",
+"you make every little interaction stay in my head",
+"you are the person i want beside me for the random stuff",
+"i'd share my headphones with you. that's serious.",
+"you make my heart forget to be reasonable",
+"i like having a person who makes everything feel lighter",
+"you are my favourite person to say absolutely nothing with",
+"i'd choose you even if there was a button saying choose wisely",
+"you make my life feel less repetitive",
+"you are the person i want to celebrate tiny things with",
+"i like how your presence makes everything feel more familiar",
+"you make my favourite memories impossible to rank",
+"i'd pick you even if the machine told me not to",
+"you are my favourite little piece of happiness",
+"i like how easy it is to care about you",
+"you make the world feel like a nicer place to be",
+"i'd choose another random afternoon with you over anything fancy",
+"you are the person who makes me want to keep looking forward",
+"i like that you make my brain wander in the best way",
+"you make every small joke feel ten times better",
+"you are my favourite person to send nonsense to",
+"i'd pick your side in an argument even if you were obviously wrong",
+"you make every little hello feel like a tiny win",
+"i like that your smile can completely change the atmosphere",
+"you are the person i would want on my team for anything",
+"i'd choose you even if i had to press the button a thousand times",
+"you make my favourite days even easier to remember",
+"i like the way you make time feel too fast",
+"you are my favourite reason to be hopeful",
+"i'd save the last slice for you and pretend i wasn't tempted",
+"you make my heart feel very easily convinced",
+"i like how you can make the smallest thing funny",
+"you are the person i would choose for a completely unplanned day",
+"i'd still find you in a room full of people",
+"you make the ordinary feel like enough",
+"i like that you make me want to stay present",
+"you are my favourite person to get distracted with",
+"i'd choose you even if there were unlimited rerolls",
+"you make my days feel like they have better stories",
+"i like how you make me notice things i normally miss",
+"you are the person i want around for the good and weird moments",
+"i'd pick you without needing to know the prize",
+"you make every random memory a little sweeter",
+"i like that i can always find something to smile about with you",
+"you are my favourite reason to ignore the clock",
+"i'd choose you even if this card was somehow rigged against me",
+"you make my heart feel very lucky indeed",
+
+/* 301 */
+
+"you are my favourite person to accidentally make plans with",
+"i like how you make everything feel more alive",
+"you make my brain keep replaying the nicest little moments",
+"i'd choose you before the lottery numbers were even announced",
+"you are the person i want to share random victories with",
+"you make bad days feel less permanent",
+"i like that you can turn a boring story into something funny",
+"you are my favourite reason to stay a little longer",
+"i'd pick you even if the prize was a lifetime supply of pizza",
+"you make every ordinary day have a little sparkle",
+"you are the person i want to hear from at the end of the day",
+"i like how you make everything feel safe and easy",
+"you make my favourite memories feel like they happened yesterday",
+"i'd choose you even if the odds were one in a billion",
+"you are my favourite person to laugh at completely stupid things with",
+"i like how you make me want to share my whole day",
+"you make the smallest moments stay with me",
+"you are the person who makes me forget to check the time",
+"i'd happily choose you from a pile of a thousand tickets",
+"you make my world feel a little less noisy",
+"you are my favourite reason to look forward to a message",
+"i like how your laugh can fix a weird mood",
+"you make everything feel more memorable",
+"i'd choose your company over literally almost any plan",
+"you are the person i want to make inside jokes with forever",
+"i like how naturally you became important to me",
+"you make even awkward moments kind of adorable",
+"you are my favourite person to be completely random with",
+"i'd pick you even if there was a suspiciously shiny jackpot",
+"you make my heart feel like it got lucky by accident",
+"i like knowing that somewhere in this huge world, there's you",
+"you are the person i want to tell when something reminds me of you",
+"i'd choose you even if every ticket had your name on it",
+"you make my favourite memories feel warmer",
+"i like how you make me want to slow down sometimes",
+"you are my favourite person to share a quiet moment with",
+"i'd happily spend a whole afternoon doing nothing with you",
+"you make every tiny thing feel a little more important",
+"i like that you can make me laugh when i least expect it",
+"you are the reason my brain randomly goes 'oh, her' and smiles",
+"i'd pick you even if i had to win the lottery first",
+"you make being around you feel ridiculously natural",
+"i like how your existence somehow makes my day better",
+"you are my favourite person to get carried away talking to",
+"i'd choose your weirdness every single time",
+"you make the little details matter",
+"i like that you are someone i can genuinely look forward to",
+"you are the person i would choose for a midnight conversation",
+"i'd rather have your company than a perfect plan",
+"you make every good memory feel a little brighter",
+"i like how you can make me forget what i was complaining about",
+"you are my favourite kind of surprise",
+"i'd pick you even if i had to scratch every card in the box",
+"you make me want to keep making memories instead of just remembering them",
+"i like that you make simple things enough",
+"you are the person i want beside me when something ridiculous happens",
+"i'd choose you over winning something i couldn't share with you",
+"you make my heart feel like it knows something my brain doesn't",
+"i like how you make me smile before i even notice",
+"you are my favourite person to have a completely useless conversation with",
+"i'd choose you even if the ticket numbers were against us",
+"you make my days feel less like routines",
+"i like that your little habits somehow become my favourite things",
+"you are the person i would always make room for",
+"i'd pick your smile over every prize on the board",
+"you make every random moment feel worth keeping",
+"i like that you make me want to remember exact details",
+"you are my favourite person to get excited about tiny things with",
+"i'd choose you even if the lottery machine was definitely broken",
+"you make everything feel a little more hopeful",
+"i like how your presence can make a room feel different",
+"you are the person i want to share the boring parts with too",
+"i'd rather have a normal day with you than an extraordinary one alone",
+"you make my heart very bad at pretending not to care",
+"i like how easily you can make me feel better",
+"you are my favourite person to accidentally talk to for hours",
+"i'd choose you even if i had to write your name on every ticket",
+"you make my favourite songs feel like memories",
+"i like how you somehow make me feel lucky without doing anything",
+"you are the person i want to keep choosing",
+"i'd pick you even if there was only one chance",
+"you make every little smile feel contagious",
+"i like how you make the future feel less intimidating",
+"you are my favourite person to share a stupid idea with",
+"i'd choose you even if there were a thousand other possibilities",
+"you make my heart do the tiny happy thing again",
+"i like that i can think about you and instantly feel lighter",
+"you are the person i want around when everything goes slightly wrong",
+"i'd save the best story of my day for you",
+"you make every conversation feel like it ends too soon",
+"i like how your name looks in my notifications",
+"you are my favourite person to have no plans with",
+"i'd choose you even if the universe offered me a reroll",
+"you make normal days feel suspiciously good",
+"i like that you can make me laugh with practically nothing",
+"you are the person i want to keep surprising",
+"i'd choose your company even if the lottery paid millions",
+"you make my favourite moments happen without planning them",
+"i like how you make me care about the smallest things",
+"you are the person who makes 'just one more minute' dangerous",
+"i'd pick you again before the first choice even finished loading",
+
+/* 401 */
+
+"you make my heart feel like it won without entering",
+"i like how easily you became part of my everyday thoughts",
+"you are the person i want to tell every ridiculous story to",
+"i'd choose you even if the ticket had no prize",
+"you make boring days much easier to get through",
+"i like how your smile can completely change my mood",
+"you are my favourite person to make absolutely no sense with",
+"i'd pick you even if i had to close my eyes and choose",
+"you make everything feel a little less heavy",
+"i like that you can make me excited about ordinary plans",
+"you are the person i want to laugh with when nothing is funny",
+"i'd choose you before checking the rules",
+"you make tiny moments feel like secret treasures",
+"i like that you make me want to remember the details",
+"you are my favourite person to tell 'guess what' to",
+"i'd choose you even if every other card promised free food",
+"you make my heart feel ridiculously comfortable",
+"i like how you can turn five minutes into an entire memory",
+"you are the person i want around when the day gets weird",
+"i'd still pick you after seeing every possible card",
+"you make every little victory more fun",
+"i like how naturally i want to include you in things",
+"you are my favourite person to share a look with",
+"i'd choose you even if the lottery machine started smoking",
+"you make my brain collect tiny reasons to smile",
+"i like how your presence can make everything feel calmer",
+"you are the person i want to send random pictures to",
+"i'd pick you even if there were no guarantee",
+"you make every day have something worth looking forward to",
+"i like how you make me feel like i can just be me",
+"you are my favourite person to accidentally spend too much time with",
+"i'd choose you even if the prize was absolutely nothing",
+"you make my heart very easy to impress",
+"i like how you make random places feel familiar",
+"you are the person i want to celebrate little things with",
+"i'd pick your laugh over every jackpot",
+"you make every silly moment better",
+"i like how you make the day feel shorter in a good way",
+"you are my favourite person to bother with dumb jokes",
+"i'd choose you even if the odds were completely ridiculous",
+"you make my memories feel more colourful",
+"i like that you can make a normal sentence stay in my head",
+"you are the person i want to hear from when something good happens",
+"i'd choose you even if the card told me to pick something else",
+"you make the smallest kindness mean a lot",
+"i like how you make my favourite moments happen naturally",
+"you are my favourite person to share silence with",
+"i'd pick you even if the jackpot was sitting right there",
+"you make my heart feel like it has its favourite place",
+"i like how easy it is to enjoy a day with you",
+"you are the person i would choose for a completely pointless road trip",
+"i'd choose you even if we had absolutely no idea where we were going",
+"you make the ordinary feel strangely exciting",
+"i like how you can make me smile without saying much",
+"you are my favourite person to think about when i'm bored",
+"i'd pick you even if i had to scratch through ten thousand cards",
+"you make every conversation feel like time well spent",
+"i like that you are someone i genuinely never want to take for granted",
+"you are the person i want to keep laughing with",
+"i'd choose you even if the lottery numbers were all wrong",
+"you make my day better just by being part of it",
+"i like how you make my brain forget its to-do list",
+"you are my favourite person to make memories with",
+"i'd pick you even if the prize came with absolutely no instructions",
+"you make everything feel slightly more magical",
+"i like how you make small things feel worth celebrating",
+"you are the person i would always make time for",
+"i'd choose you even if the ticket was upside down",
+"you make my heart very bad at being casual",
+"i like that your messages can make me grin instantly",
+"you are my favourite person to share random thoughts with",
+"i'd pick you even if i had to choose from a hat",
+"you make every ordinary moment feel a little softer",
+"i like how you make me want to stay in the moment",
+"you are the person i want to tell about the dumbest thing that happened",
+"i'd choose you even if every other option looked impressive",
+"you make my favourite days even better by existing in them",
+"i like how your presence can turn a bad mood around",
+"you are the person i would choose for every silly adventure",
+"i'd pick you even if the ticket was the last one left",
+"you make my heart feel very easily convinced",
+"i like that you somehow make everything more fun",
+"you are my favourite person to have around when i'm being ridiculous",
+"i'd choose you even if the lottery required a second lottery",
+"you make me want to keep collecting little memories",
+"i like how you can make me laugh at the worst timing",
+"you are the person i want beside me for the random parts of life",
+"i'd pick you even if the prize was just another day together",
+"you make ordinary conversations surprisingly important",
+"i like how your smile can make a whole day feel different",
+"you are my favourite person to share good news with",
+"i'd choose you even if there were a million reasons not to",
+"you make my world feel a little more complete",
+"i like that you make me want to keep trying",
+"you are the person i want to choose tomorrow too",
+"i'd pick you even if i knew the result already",
+"you make every little memory feel like it belongs somewhere special",
+
+/* 501 */
+
+"you are my favourite reason to get excited about nothing",
+"i like how you make even the quiet moments memorable",
+"you make my heart feel like it has a permanent smile",
+"i'd choose you even if the ticket said 'try again'",
+"you are the person i want to tell when i see something funny",
+"i like how you make everything feel a little more personal",
+"you make my favourite memories impossible to forget",
+"i'd pick you even if the prize was a single chocolate",
+"you are my favourite person to share a completely random thought with",
+"i like how you make me feel lucky without even trying",
+"you make every little plan sound better",
+"i'd choose you even if the lottery was rigged by a villain",
+"you are the person i want to laugh with until neither of us remembers why",
+"i like how easily you can make me feel at home",
+"you make the world feel a little nicer",
+"i'd pick you even if there were fireworks and confetti everywhere else",
+"you are my favourite reason to look forward to ordinary days",
+"i like that you can make me forget i'm supposed to be serious",
+"you make every little conversation worth remembering",
+"i'd choose you even if i had to pick with my eyes closed",
+"you are the person i want to keep discovering new things with",
+"i like how you make time disappear",
+"you make my heart feel very easy to read",
+"i'd pick you even if every card looked exactly the same",
+"you are my favourite person to share a stupid laugh with",
+"i like that you make me notice how good little moments can be",
+"you make every day feel like it has a hidden bonus",
+"i'd choose you even if there were a giant flashing jackpot",
+"you are the person i want around when nothing goes according to plan",
+"i like how you make weird situations fun",
+"you make my favourite memories feel even more special",
+"i'd pick you even if the lottery machine was absolutely determined to stop me",
+"you are my favourite person to send a random 'look at this' to",
+"i like how your laugh stays in my head",
+"you make me want to make more memories instead of rushing through them",
+"i'd choose you even if the other ticket came with unlimited snacks",
+"you are the person i want to share both good news and nonsense with",
+"i like how you can make me feel better without fixing anything",
+"you make normal places feel like they have stories",
+"i'd pick you even if i had to wait a hundred years for the result",
+"you are my favourite person to have a bad joke with",
+"i like how you make me feel understood without needing a giant explanation",
+"you make every random day slightly more interesting",
+"i'd choose you even if the odds were literally zero",
+"you are the person i want to keep making dumb memories with",
+"i like how you can make me smile just by existing",
+"you make everything feel a little more worth doing",
+"i'd pick you even if the prize was just your company",
+"you are my favourite person to get distracted around",
+"i like how you make the smallest things feel like events",
+"you make my brain save your funniest moments",
+"i'd choose you even if every ticket had a different universe on it",
+"you are the person i want to tell about every weird thought",
+"i like that you make me want to share the boring parts too",
+"you make my days feel more like stories",
+"i'd pick you even if i had to scratch through every card in existence",
+"you are my favourite reason to smile at absolutely nothing",
+"i like how your presence can make a whole afternoon better",
+"you make every conversation feel too short",
+"i'd choose you even if the jackpot was sitting in the next room",
+"you are the person i want to make ordinary things special with",
+"i like how you make me care about tiny details",
+"you make my heart act like it has a favourite song",
+"i'd pick you even if there were a thousand better-looking tickets",
+"you are my favourite person to be completely unserious with",
+"i like how you make everything feel less awkward",
+"you make my favourite days feel even more favourite",
+"i'd choose you even if the ticket printer ran out of paper",
+"you are the person i want beside me for every unexpected moment",
+"i like how you make me want to keep looking forward",
+"you make little jokes become big memories",
+"i'd pick you even if the prize was just another silly conversation",
+"you are my favourite person to share comfortable silence with",
+"i like how you can make me laugh when i didn't think i would",
+"you make my world feel more fun",
+"i'd choose you even if i had to write your name a thousand times",
+"you are the person i want to tell when something reminds me of you",
+"i like how you make my brain wander into happy places",
+"you make every tiny hello feel like something",
+"i'd pick you even if the machine only gave me one try",
+"you are my favourite person to have around on random days",
+"i like how naturally you became one of my favourite parts of life",
+"you make my heart feel ridiculously grateful",
+"i'd choose you even if the card was blank",
+"you are the person who makes boring plans worth accepting",
+"i like how you make me want to stay a little longer",
+"you make every small laugh feel important",
+"i'd pick you even if the lottery had a very strict no-cheating rule",
+"you are my favourite person to make a mess of plans with",
+"i like how you make everything feel less serious",
+"you make ordinary moments surprisingly easy to treasure",
+"i'd choose you even if the prize was hidden somewhere impossible",
+"you are the person i want to keep surprising",
+"i like how you can make me forget about the rest of the world for a bit",
+"you make every day with you feel worth remembering",
+"i'd pick you even if the winning number was 0000",
+"you are my favourite person to laugh with for absolutely no reason",
+"i like how your existence makes my life feel more interesting",
+"you make the smallest things feel like lucky moments",
+
+/* 601 */
+
+"i'd choose you even if the lottery machine gave me unlimited retries",
+"you are my favourite person to tell pointless stories to",
+"i like how you make random moments stick around in my head",
+"you make my heart feel like it found something it wasn't looking for",
+"i'd pick you even if there were a giant jackpot waiting elsewhere",
+"you are the person i want to share every tiny victory with",
+"i like how easy it is to smile around you",
+"you make ordinary days feel less ordinary",
+"i'd choose you even if i had to guess the number backwards",
+"you are my favourite person to be stupid with",
+"i like how you make the little things matter",
+"you make me want to keep every funny memory",
+"i'd pick you even if the ticket had terrible printing",
+"you are the person i want to hear from when my day gets weird",
+"i like how you make me feel like things will be okay",
+"you make every random conversation feel important",
+"i'd choose you even if every other ticket was gold",
+"you are my favourite person to make accidental memories with",
+"i like how your smile makes everything feel easier",
+"you make my favourite moments happen without planning",
+"i'd pick you even if the lottery announcer personally told me not to",
+"you are the person i want beside me for boring errands",
+"i like that you make even errands sound fun",
+"you make my heart very bad at following instructions",
+"i'd choose you even if the ticket was slightly suspicious",
+"you are my favourite reason to check the time",
+"i like how you make a simple day feel full",
+"you make every little thing more fun when you're involved",
+"i'd pick you even if there were only two tickets left",
+"you are the person i want to send my worst jokes to",
+"i like how you make me feel comfortable being ridiculous",
+"you make my favourite memories feel impossible to replace",
+"i'd choose you even if the prize was just a handwritten note",
+"you are my favourite person to share random discoveries with",
+"i like how your presence makes time move too quickly",
+"you make the boring parts worth getting through",
+"i'd pick you even if the lottery machine was clearly broken",
+"you are the person i want to tell about tiny things that nobody else would care about",
+"i like how you make those tiny things feel worth telling",
+"you make my heart smile in the most inconvenient moments",
+"i'd choose you even if the ticket came with no instructions",
+"you are my favourite person to sit beside",
+"i like how comfortable it feels to have you around",
+"you make every little memory feel warmer",
+"i'd pick you even if i had to choose after spinning around ten times",
+"you are the person i want to share the quiet moments with",
+"i like how you make me want to slow down",
+"you make every good thing better just by being there",
+"i'd choose you even if the jackpot had my name on it",
+"you are my favourite person to laugh with until my face hurts",
+"i like how you make even stupid jokes worth remembering",
+"you make every day have a little more personality",
+"i'd pick you even if the ticket numbers were upside down",
+"you are the person i want around when plans fall apart",
+"i like how you can make chaos feel manageable",
+"you make my favourite thoughts involve you way too often",
+"i'd choose you even if the lottery promised a private island",
+"you are my favourite person to share a snack with",
+"i like how easily you became someone i care about deeply",
+"you make the smallest gestures mean a lot",
+"i'd pick you even if the prize was a single french fry",
+"you are the person i want to make more inside jokes with",
+"i like how you make me want to remember exact moments",
+"you make my heart feel a little less restless",
+"i'd choose you even if i had to wait through every single ticket",
+"you are my favourite person to get lost in conversation with",
+"i like how you can make a few minutes feel like an hour",
+"you make every little plan more exciting",
+"i'd pick you even if the other ticket had better odds",
+"you are the person i want to keep finding reasons to smile with",
+"i like how you make things feel more hopeful",
+"you make my day better in tiny ways that add up",
+"i'd choose you even if the lottery rules were fifty pages long",
+"you are my favourite person to tell weird facts to",
+"i like how you make the random parts of life more fun",
+"you make my favourite memories feel even more alive",
+"i'd pick you even if the machine gave me a dramatic countdown",
+"you are the person i want beside me for every ridiculous idea",
+"i like how you make me want to say one more thing",
+"you make the smallest conversations stay with me",
+"i'd choose you even if there were a button labelled 'definitely don't press'",
+"you are my favourite person to be curious with",
+"i like how you make me want to notice more",
+"you make every ordinary place feel different",
+"i'd pick you even if the prize was a lifetime of boring Mondays",
+"you are the person who makes even Mondays less terrible",
+"i like how you make my brain randomly go back to happy moments",
+"you make my heart feel like it has somewhere nice to be",
+"i'd choose you even if the lottery required a written essay",
+"you are my favourite person to share a completely pointless adventure with",
+"i like how you make every little adventure better",
+"you make me laugh at times when i absolutely shouldn't",
+"i'd pick you even if the ticket was hidden under a mountain",
+"you are the person i want to keep making silly memories with",
+"i like how you make the future feel full of possibilities",
+"you make every tiny moment feel a little more special",
+
+/* 701 */
+
+"i'd choose you even if i had to scratch a thousand cards to find you",
+"you are my favourite person to accidentally spend an entire evening talking to",
+"i like how you make simple conversations feel important",
+"you make my heart feel like it got the winning number",
+"i'd pick you even if the jackpot was ridiculously tempting",
+"you are the person i want to tell about every strange thought",
+"i like how you make me want to share everything",
+"you make boring days feel like they have secret good parts",
+"i'd choose you even if the ticket was printed in tiny font",
+"you are my favourite person to laugh with over nothing",
+"i like how you make the world feel less dull",
+"you make every little moment easier to appreciate",
+"i'd pick you even if the lottery machine had a personal grudge",
+"you are the person i want around when something unexpected happens",
+"i like how you make unexpected things fun",
+"you make my favourite memories feel like little treasures",
+"i'd choose you even if i couldn't see the ticket",
+"you are my favourite person to send random thoughts to",
+"i like how you make me smile before i realise it",
+"you make everything feel slightly more exciting",
+"i'd pick you even if the prize was hidden behind a riddle",
+"you are the person i want to share quiet mornings with",
+"i like how you make quiet moments feel full",
+"you make every random day feel a little more personal",
+"i'd choose you even if the lottery machine made me wait an hour",
+"you are my favourite person to make completely unnecessary plans with",
+"i like how you make even bad plans fun",
+"you make my heart very easily distracted",
+"i'd pick you even if the winning ticket was the ugliest one",
+"you are the person i want to celebrate with when something finally works",
+"i like how you make small wins feel bigger",
+"you make every little laugh feel worth remembering",
+"i'd choose you even if the prize came with a mountain of paperwork",
+"you are my favourite person to share a look with when something funny happens",
+"i like how you can make a whole conversation out of nothing",
+"you make every day a little more interesting",
+"i'd pick you even if the ticket was folded into a tiny square",
+"you are the person i want to keep talking to after the conversation should have ended",
+"i like how you make 'goodnight' somehow feel too early",
+"you make my favourite memories feel like places i can visit again",
+"i'd choose you even if the lottery required perfect luck",
+"you are my favourite person to get distracted with",
+"i like how you make time disappear in the nicest way",
+"you make the ordinary feel surprisingly special",
+"i'd pick you even if the prize was a lifetime supply of socks",
+"you are the person i want to share the weirdest stories with",
+"i like how you make weird stories better",
+"you make my heart feel very easily convinced",
+"i'd choose you even if there were no rules",
+"you are my favourite reason to look at my phone and smile",
+"i like how you make me want to tell you everything first",
+"you make tiny memories feel bigger than they should",
+"i'd pick you even if the ticket had already been scratched",
+"you are the person i want to have random adventures with",
+"i like how you make every little adventure memorable",
+"you make my day feel better just by being part of it",
+"i'd choose you even if the prize was completely imaginary",
+"you are my favourite person to sit around and do nothing with",
+"i like how easy it is to be myself around you",
+"you make my heart forget to be sensible",
+"i'd pick you even if there were a hundred different choices",
+"you are the person i want beside me when something makes no sense",
+"i like how you make nonsense feel fun",
+"you make every ordinary memory a little brighter",
+"i'd choose you even if the ticket numbers were random letters",
+"you are my favourite person to share good news with",
+"i like how your excitement makes things more exciting",
+"you make my favourite moments happen naturally",
+"i'd pick you even if the machine demanded a dramatic speech",
+"you are the person i want to make more memories with",
+"i like how you make me want to remember everything",
+"you make every tiny joke feel like an inside joke",
+"i'd choose you even if the prize was just a high five",
+"you are my favourite person to be completely unserious with",
+"i like how you make even waiting around enjoyable",
+"you make my heart feel very lucky",
+"i'd pick you even if i had to choose while blindfolded",
+"you are the person i want to share random snacks with",
+"i like how you make small things feel exciting",
+"you make every good memory better when i remember you were there",
+"i'd choose you even if the lottery ticket was written in crayon",
+"you are my favourite person to make bad jokes with",
+"i like how your smile can reset my entire mood",
+"you make the day feel better without needing to do anything",
+"i'd pick you even if the prize was one slightly warm cookie",
+"you are the person i want to keep laughing with",
+"i like how you make even silence comfortable",
+"you make every little moment feel worth staying for",
+"i'd choose you even if the odds were completely ridiculous",
+"you are my favourite person to share a tiny secret with",
+"i like how you make me want to keep looking forward",
+"you make my heart feel like it has its own favourite person",
+"i'd pick you even if there was only one ticket in the machine",
+"you are the person i want to tell when i see something beautiful",
+"i like how you make random days feel memorable",
+"you make every ordinary conversation a little sweeter",
+
+/* 801 */
+
+"i'd choose you even if the lottery had a million tiny rules",
+"you are my favourite person to laugh with when absolutely nothing makes sense",
+"i like how you make my days feel less repetitive",
+"you make my heart feel like it already knows the answer",
+"i'd pick you even if the prize was hidden somewhere ridiculous",
+"you are the person i want to tell about the smallest things",
+"i like how you make small things feel important",
+"you make every little memory worth keeping",
+"i'd choose you even if the ticket had been lost and found three times",
+"you are my favourite person to share random observations with",
+"i like how you make me notice things differently",
+"you make ordinary moments feel like tiny wins",
+"i'd pick you even if the lottery machine was powered by potatoes",
+"you are the person i want around for all the random stuff",
+"i like how you make randomness feel fun",
+"you make my heart smile at the worst possible times",
+"i'd choose you even if the prize was a single sticker",
+"you are my favourite person to make completely unnecessary jokes with",
+"i like how you can turn nothing into a memory",
+"you make my favourite days feel even more special",
+"i'd pick you even if the ticket was hidden inside another ticket",
+"you are the person i want to share every weird little thought with",
+"i like how you make me feel less alone in the random moments",
+"you make everything feel more worth talking about",
+"i'd choose you even if the lottery machine started asking questions",
+"you are my favourite person to get excited about tiny things with",
+"i like how your excitement makes me smile",
+"you make even boring stories fun to hear",
+"i'd pick you even if there were a suspiciously attractive jackpot",
+"you are the person i want to keep making memories with",
+"i like how you make me want to stay present",
+"you make the simplest moments feel full",
+"i'd choose you even if i had to pick from a thousand identical cards",
+"you are my favourite person to talk nonsense with",
+"i like how easily you can make me laugh",
+"you make every little thing feel a bit brighter",
+"i'd pick you even if the lottery machine had a countdown in all caps",
+"you are the person i want to hear about your day from",
+"i like how your day somehow becomes interesting to me",
+"you make my heart feel ridiculously happy",
+"i'd choose you even if the ticket came with a warning label",
+"you are my favourite person to have around when i'm tired",
+"i like how you make even quiet days feel nice",
+"you make every little moment feel more comfortable",
+"i'd pick you even if the prize was a slightly suspicious mystery box",
+"you are the person i want to share the mystery with",
+"i like how you make curiosity more fun",
+"you make my favourite thoughts appear at random",
+"i'd choose you even if the lottery machine was judging me",
+"you are my favourite person to tell 'you won't believe this' to",
+"i like how you make stories better just by listening",
+"you make me want to keep telling you things",
+"i'd pick you even if the winning ticket was hidden under the floor",
+"you are the person i want to find it with",
+"i like how you make little adventures feel important",
+"you make every day have at least one moment worth smiling about",
+"i'd choose you even if the ticket was printed backwards",
+"you are my favourite person to laugh with after something goes wrong",
+"i like how you make mistakes less embarrassing",
+"you make everything feel a little more forgiving",
+"i'd pick you even if the lottery machine demanded a dance",
+"you are the person i'd rather embarrass myself around",
+"i like how you make being silly feel completely normal",
+"you make my heart feel lighter",
+"i'd choose you even if the prize was just a handwritten 'good job'",
+"you are my favourite person to celebrate with",
+"i like how you make tiny victories worth celebrating",
+"you make every good moment last longer in my head",
+"i'd pick you even if the ticket had a typo",
+"you are the person i would trust to laugh at the typo with me",
+"i like how you make everything more fun",
+"you make even waiting for something exciting feel exciting",
+"i'd choose you even if there were a secret bonus round",
+"you are my favourite person to play along with",
+"i like how you make simple things feel like games",
+"you make my brain keep finding reasons to think about you",
+"i'd pick you even if i had to submit a formal application",
+"you are the person i'd write the world's cheesiest application for",
+"i like how you make cheesy things feel less embarrassing",
+"you make my heart very obviously biased",
+"i'd choose you even if the lottery had an independent referee",
+"you are my favourite person to be biased about",
+"i like how you make me care about little details",
+"you make ordinary days feel like they have hidden surprises",
+"i'd pick you even if the prize was just another normal day together",
+"you are my favourite person to make that day with",
+"i like how you make everything feel more meaningful",
+"you make my favourite memories impossible to replace",
+"i'd choose you even if i knew there was no prize",
+"you are my favourite part of the whole thing",
+"i like how you make me smile without even knowing",
+"you make every random thought about you a good one",
+"i'd pick you even if the ticket was blank",
+"you are my favourite blank-space-filler",
+"i like how you make life feel less predictable",
+"you make every surprise a little better",
+
+/* 901 */
+
+"i'd choose you even if the lottery only had one winning ticket",
+"you are my favourite person to share absolutely pointless information with",
+"i like how you make random conversations become favourite memories",
+"you make my heart feel very easily won over",
+"i'd pick you even if the ticket machine was hidden in another country",
+"you are the person i'd go looking for it with",
+"i like how you make little adventures feel worth having",
+"you make every day feel slightly more interesting",
+"i'd choose you even if the prize was a lifetime of rainy days",
+"you are my favourite person to watch the rain with",
+"i like how you make quiet moments feel special",
+"you make even boring weather feel like a memory",
+"i'd pick you even if the lottery happened on the worst day",
+"you are the person who could make that day better",
+"i like how you make bad moments easier to get through",
+"you make my heart feel a little more patient",
+"i'd choose you even if the prize was nothing at all",
+"you are enough of a prize for me to stop looking",
+"i like how you make me want to stay",
+"you make ordinary time feel valuable",
+"i'd pick you even if the ticket was hidden behind a hundred others",
+"you are the one i'd keep looking for",
+"i like how you make effort feel worth it",
+"you make every little moment count",
+"i'd choose you even if the odds were written in microscopic numbers",
+"you are my favourite number on the board anyway",
+"i like how you make the whole thing feel obvious",
+"you make my heart terrible at pretending",
+"i'd pick you even if the lottery machine had a personality",
+"you are the personality i'd rather deal with",
+"i like how you make me laugh at my own terrible jokes",
+"you make every silly thought feel shareable",
+"i'd choose you even if the card was upside down",
+"you are still the right answer somehow",
+"i like how you make simple things feel right",
+"you make my favourite memories happen in the most random places",
+"i'd pick you even if the prize was a broken trophy",
+"you are still the better prize",
+"i like how you make me appreciate what i already have",
+"you make having a good day feel easier",
+"i'd choose you even if the lottery required three forms of identification",
+"you are worth the paperwork",
+"i like how you make me want to keep showing up",
+"you make ordinary routines feel less ordinary",
+"i'd pick you even if the ticket was stuck in the machine",
+"you are worth waiting for",
+"i like how you make patience feel less annoying",
+"you make every little hello feel like a tiny reward",
+"i'd choose you even if the prize came with absolutely no instructions",
+"you are the kind of choice i don't need instructions for",
+"i like how naturally you fit into my favourite thoughts",
+"you make my heart feel very sure",
+"i'd pick you even if the machine offered me a hundred rerolls",
+"you are the only reroll i wouldn't need",
+"i like how you make choosing easy",
+"you make every little moment feel like the right one",
+"i'd choose you even if every card was trying to distract me",
+"you are a very effective distraction yourself",
+"i like how you make it impossible to stay focused",
+"you make boring tasks way more tolerable",
+"i'd pick you even if the jackpot was ridiculously shiny",
+"you are still more interesting",
+"i like how you make the simplest things feel exciting",
+"you make my favourite memories come from unexpected places",
+"i'd choose you even if i had to scratch through a thousand layers",
+"you are worth every little scratch",
+"i like how you make effort feel fun",
+"you make even waiting worth it",
+"i'd pick you even if the lottery machine was on strike",
+"you are still the ticket i'd keep",
+"i like how you make me want to keep little things",
+"you make memories feel like prizes",
+"i'd choose you even if the prize was just one more conversation",
+"you are the conversation i'd choose anyway",
+"i like how you make time feel too short",
+"you make every goodbye feel a little too soon",
+"i'd pick you even if the ticket said 'wrong answer'",
+"you'd still be my right one",
+"i like how you make me ignore the rules sometimes",
+"you make life more fun than following instructions",
+"i'd choose you even if the lottery machine threatened to reboot",
+"you are still worth waiting for",
+"i like how you make little interruptions feel nice",
+"you make my day better when i least expect it",
+"i'd pick you even if the jackpot came with a crown",
+"you already have enough royalty energy",
+"i like how you make me smile at the dumbest things",
+"you make ordinary moments impossible to ignore",
+"i'd choose you even if the final ticket was missing",
+"you are still the one i'd want to find",
+"i like how you make searching feel worth it",
+"you make every little discovery more fun",
+"i'd pick you even if the lottery was secretly rigged",
+"you are absolutely the reason i'd rig it",
+"i like how you make me want to cheat at harmless little games",
+"you make winning feel less important than who i'm with",
+"i'd choose you even if there was no lottery at all",
+"you are my favourite choice without the game",
+"i like how you make me smile just thinking about you",
+"you make the whole world feel a little softer",
+
+/* 1001 */
+
+"i'd choose you on purpose, not just by luck",
+"you are the kind of person i'd pick before seeing any cards",
+"i like how you make my favourite moments happen naturally",
+"you make every random day feel worth remembering",
+"i'd still choose you if i had to start from zero",
+"you are my favourite person to have in the little moments",
+"i like how you make ordinary life feel less ordinary",
+"you make my heart feel very lucky",
+"i'd pick you even if there were no prize waiting",
+"you are the part of this lottery i actually care about",
+"i like how you make everything feel a little warmer",
+"you make every little memory easier to smile about",
+"i'd choose you even after seeing every possible outcome",
+"you are the answer i'd keep choosing",
+"i like how you make me want to keep making memories",
+"you make simple days feel like good ones",
+"i'd pick you even if luck had nothing to do with it",
+"you are my favourite person to share a day with",
+"i like how easy it is to be happy around you",
+"you make my favourite moments feel even more favourite",
+"i'd choose you even if this was the final ticket",
+"you are the person i'd want beside me when the game ends",
+"i like how you make the little things matter",
+"you make every ordinary conversation worth keeping",
+"i'd pick you even if i knew the result already",
+"you are still the choice i'd make",
+"i like how you make my days feel fuller",
+"you make my heart feel like it got something right",
+"i'd choose you even if there were a thousand jackpots",
+"you are the one prize i'd actually keep",
+"i like how you make me laugh at nothing",
+"you make every silly memory better",
+"i'd pick you even if the lottery disappeared tomorrow",
+"you are still my favourite choice",
+"i like how you make being around you feel easy",
+"you make my world a little more fun",
+"i'd choose you even if there was no lucky number",
+"you are my favourite kind of luck",
+"i like how you make me want to notice the good things",
+"you make every little moment feel worth it",
+"i'd pick you even if the cards were all blank",
+"you are the message i'd want to read anyway",
+"i like how you make everything feel more personal",
+"you make my favourite memories feel impossible to lose",
+"i'd choose you even if the game had already ended",
+"you are still the person i'd look for",
+"i like how you make me want to stay a little longer",
+"you make every day with you feel like a tiny win",
+"i'd pick you even if the odds didn't matter",
+"you are my favourite reason to feel lucky",
+"i like how you make me smile without trying",
+"you make even quiet moments feel important",
+"i'd choose you even if i had to write the answer myself",
+"you are still the answer",
+"i like how you make everything feel less complicated",
+"you make my heart feel very at home",
+"i'd pick you even if the lottery had no winner",
+"you are still someone worth choosing",
+"i like how you make me want to keep looking forward",
+"you make tomorrow sound a little nicer",
+"i'd choose you even if i had to wait forever for the ticket",
+"you are worth waiting for",
+"i like how you make patience feel easier",
+"you make every little hello feel special",
+"i'd pick you even if there were no instructions",
+"you are the choice that doesn't need instructions",
+"i like how naturally you became important to me",
+"you make every good memory feel brighter",
+"i'd choose you even if i could see every card at once",
+"you are still the one i'd want",
+"i like how you make my favourite thoughts come back",
+"you make my days feel better in small ways",
+"i'd pick you even if the lottery was just a joke",
+"you are still the part i mean seriously",
+"i like how you make me want to keep smiling",
+"you make the random moments feel worth remembering",
+"i'd choose you even if luck wasn't on my side",
+"you are the kind of lucky i don't need to question",
+"i like how you make everything feel a little more okay",
+"you make my heart feel lighter",
+"i'd pick you even if there was only one possible choice",
+"you are still the choice i'd make",
+"i like how you make normal days feel good",
+"you make every little thing more enjoyable",
+"i'd choose you even if this whole lottery was fake",
+"you are the only part that isn't",
+"i like how you make me care about the tiny details",
+"you make memories out of moments without trying",
+"i'd pick you even if i had to do it all over again",
+"you are still my favourite answer",
+"i like how you make my life feel a little less random",
+"you make the best kind of sense",
+"i'd choose you even if the universe gave me a thousand options",
+"you are the one i'd keep choosing",
+"i like how you make me feel lucky just by being here",
+"you make every little moment better",
+"i'd pick you every time this thing gets rerolled",
+"you are my favourite result",
+"i like how you make even this silly lottery mean something",
+"you make my heart very happy",
+"i'd choose you, no scratching required ♡"
 
 ];
 
 
 /* =========================================================
    STATE
-   ========================================================= */
+========================================================= */
 
-const state = {
-    favourites: JSON.parse(localStorage.getItem("love-favourites") || "[]"),
-    sound: localStorage.getItem("love-sound") !== "false",
-    petals: localStorage.getItem("love-petals") !== "false",
-    reducedMotion: localStorage.getItem("love-reduced-motion") === "true",
-    revealed: Number(localStorage.getItem("love-revealed") || 0),
-    currentMessages: []
+const STORAGE_KEY = "loveLotteryState_v4";
+
+let state = {
+    favourites: [],
+    sound: true,
+    petals: true,
+    reducedMotion: false,
+    revealed: 0,
+    usedMessages: []
 };
+
+function loadState(){
+
+    try{
+
+        const saved = JSON.parse(
+            localStorage.getItem(STORAGE_KEY)
+        );
+
+        if(saved){
+
+            state = {
+                ...state,
+                ...saved
+            };
+
+        }
+
+    }catch(e){
+
+        console.warn("Could not load saved state.");
+
+    }
+
+    if(!Array.isArray(state.favourites)){
+        state.favourites = [];
+    }
+
+    if(!Array.isArray(state.usedMessages)){
+        state.usedMessages = [];
+    }
+
+}
+
+function saveState(){
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(state)
+    );
+
+}
 
 
 /* =========================================================
-   ELEMENTS
-   ========================================================= */
+   NON-REPEATING MESSAGE SYSTEM
+========================================================= */
+
+function getNewMessages(amount = 3){
+
+    const picked = [];
+
+    while(picked.length < amount){
+
+        let unused = messages.filter(
+            message => !state.usedMessages.includes(message)
+        );
+
+        /*
+           Once every message has appeared, start
+           a completely new cycle.
+        */
+        if(unused.length === 0){
+
+            state.usedMessages = [];
+
+            unused = [...messages];
+
+        }
+
+        const index =
+            Math.floor(Math.random() * unused.length);
+
+        const message = unused[index];
+
+        picked.push(message);
+
+        state.usedMessages.push(message);
+
+    }
+
+    saveState();
+
+    return picked;
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
 
 const cardsEl = document.getElementById("cards");
-const revealedCountEl = document.getElementById("revealedCount");
-const lottery = document.getElementById("lottery");
 
-const settingsPanel = document.getElementById("settingsPanel");
-const favouritesPanel = document.getElementById("favouritesPanel");
-const overlay = document.getElementById("overlay");
+const menuBtn = document.getElementById("menuBtn");
+const menu = document.getElementById("menu");
+
+const shuffleBtn = document.getElementById("shuffleBtn");
+const revealBtn = document.getElementById("revealBtn");
+
+const favourites = document.getElementById("favourites");
+const favouritesBtn = document.getElementById("favouritesBtn");
+const closeFav = document.getElementById("closeFav");
+const favList = document.getElementById("favList");
+
+const petalsEl = document.getElementById("petals");
 
 const petalsToggle = document.getElementById("petalsToggle");
 const soundToggle = document.getElementById("soundToggle");
 const motionToggle = document.getElementById("motionToggle");
 
-const favouritesList = document.getElementById("favouritesList");
+const petalSwitch = document.getElementById("petalSwitch");
+const soundSwitch = document.getElementById("soundSwitch");
+const motionSwitch = document.getElementById("motionSwitch");
+
+const resetBtn = document.getElementById("resetBtn");
 
 
 /* =========================================================
-   UTILITIES
-   ========================================================= */
+   MENU
+========================================================= */
 
-function saveState() {
-    localStorage.setItem(
-        "love-favourites",
-        JSON.stringify(state.favourites)
-    );
+menuBtn.addEventListener("click", event => {
 
-    localStorage.setItem(
-        "love-sound",
-        state.sound
-    );
+    event.stopPropagation();
 
-    localStorage.setItem(
-        "love-petals",
-        state.petals
-    );
+    menu.classList.toggle("open");
 
-    localStorage.setItem(
-        "love-reduced-motion",
-        state.reducedMotion
-    );
+});
 
-    localStorage.setItem(
-        "love-revealed",
-        state.revealed
-    );
-}
+document.addEventListener("click", event => {
 
+    if(!menu.contains(event.target) &&
+       !menuBtn.contains(event.target)){
 
-function randomItem(array) {
-    return array[Math.floor(Math.random() * array.length)];
-}
+        menu.classList.remove("open");
 
-
-function shuffleArray(array) {
-    const copy = [...array];
-
-    for (let i = copy.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-
-        [copy[i], copy[j]] = [copy[j], copy[i]];
     }
 
-    return copy;
-}
+});
 
 
 /* =========================================================
-   SOUND
-   ========================================================= */
+   AUDIO
+========================================================= */
 
 let audioContext = null;
 
-function playSound(type = "click") {
+function playSound(){
 
-    if (!state.sound) return;
+    if(!state.sound) return;
 
-    try {
+    try{
 
-        if (!audioContext) {
+        if(!audioContext){
+
             audioContext =
-                new (window.AudioContext || window.webkitAudioContext)();
+                new (window.AudioContext ||
+                window.webkitAudioContext)();
+
         }
 
-        const oscillator = audioContext.createOscillator();
-        const gain = audioContext.createGain();
+        const oscillator =
+            audioContext.createOscillator();
 
-        oscillator.connect(gain);
-        gain.connect(audioContext.destination);
+        const gain =
+            audioContext.createGain();
 
-        if (type === "reveal") {
+        oscillator.type = "sine";
 
-            oscillator.frequency.setValueAtTime(
-                520,
-                audioContext.currentTime
-            );
+        oscillator.frequency.setValueAtTime(
+            620,
+            audioContext.currentTime
+        );
 
-            oscillator.frequency.exponentialRampToValueAtTime(
-                760,
-                audioContext.currentTime + .16
-            );
-
-        } else {
-
-            oscillator.frequency.setValueAtTime(
-                420,
-                audioContext.currentTime
-            );
-
-            oscillator.frequency.exponentialRampToValueAtTime(
-                500,
-                audioContext.currentTime + .08
-            );
-        }
+        oscillator.frequency.exponentialRampToValueAtTime(
+            900,
+            audioContext.currentTime + .12
+        );
 
         gain.gain.setValueAtTime(
             .0001,
@@ -1176,345 +1999,432 @@ function playSound(type = "click") {
         );
 
         gain.gain.exponentialRampToValueAtTime(
-            .035,
-            audioContext.currentTime + .01
+            .06,
+            audioContext.currentTime + .015
         );
 
         gain.gain.exponentialRampToValueAtTime(
             .0001,
-            audioContext.currentTime + .16
+            audioContext.currentTime + .18
         );
+
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
 
         oscillator.start();
-
         oscillator.stop(
-            audioContext.currentTime + .17
+            audioContext.currentTime + .2
         );
 
-    } catch (e) {
-        // Audio isn't essential.
-    }
+    }catch(e){}
+
 }
 
 
 /* =========================================================
-   HEART EFFECT
-   ========================================================= */
+   HEART BURST
+========================================================= */
 
-function heartBurst(x, y) {
+function heartBurst(x,y){
 
-    if (state.reducedMotion) return;
+    if(state.reducedMotion) return;
 
-    for (let i = 0; i < 9; i++) {
+    for(let i=0;i<10;i++){
 
-        const heart = document.createElement("div");
+        const heart =
+            document.createElement("div");
 
-        heart.className = "heart-burst";
-        heart.textContent = Math.random() > .5 ? "♥" : "♡";
+        heart.className = "burst-heart";
+        heart.textContent =
+            Math.random() > .35 ? "♡" : "♥";
 
         heart.style.left = `${x}px`;
         heart.style.top = `${y}px`;
 
         heart.style.setProperty(
-            "--x",
-            `${(Math.random() - .5) * 180}px`
+            "--bx",
+            `${(Math.random()-.5)*180}px`
         );
 
         heart.style.setProperty(
-            "--y",
-            `${(Math.random() - .5) * 160}px`
+            "--by",
+            `${(Math.random()-.5)*180}px`
         );
 
         heart.style.setProperty(
-            "--r",
-            `${(Math.random() - .5) * 80}deg`
+            "--rot",
+            `${(Math.random()-.5)*80}deg`
         );
 
         document.body.appendChild(heart);
 
-        setTimeout(() => {
-            heart.remove();
-        }, 1000);
+        setTimeout(
+            () => heart.remove(),
+            950
+        );
+
     }
+
+}
+
+
+/* =========================================================
+   3D TILT
+========================================================= */
+
+function setupTilt(card){
+
+    if(state.reducedMotion) return;
+
+    let rect;
+
+    function move(e){
+
+        if(!rect){
+
+            rect = card.getBoundingClientRect();
+
+        }
+
+        const x =
+            e.clientX - rect.left;
+
+        const y =
+            e.clientY - rect.top;
+
+        const rotateY =
+            ((x / rect.width) - .5) * 10;
+
+        const rotateX =
+            ((y / rect.height) - .5) * -10;
+
+        card.style.transform =
+            `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(4px)`;
+
+    }
+
+    function leave(){
+
+        rect = null;
+
+        card.style.transform =
+            "rotateX(0deg) rotateY(0deg) translateZ(0)";
+
+    }
+
+    card.addEventListener("pointermove", move);
+
+    card.addEventListener("pointerleave", leave);
+
 }
 
 
 /* =========================================================
    SCRATCH CARD
-   ========================================================= */
+========================================================= */
 
-class ScratchCard {
+class ScratchCard{
 
-    constructor(element) {
+    constructor(card, message){
 
-        this.card = element;
-        this.canvas = element.querySelector(".scratch");
+        this.card = card;
+        this.message = message;
 
-        this.ctx = this.canvas.getContext("2d", {
-            willReadFrequently: true
-        });
+        this.canvas =
+            card.querySelector(".scratch-layer");
+
+        this.ctx =
+            this.canvas.getContext("2d", {
+                willReadFrequently:true
+            });
 
         this.isDown = false;
+        this.lastX = 0;
+        this.lastY = 0;
         this.revealed = false;
-        this.lastPoint = null;
 
         this.resize();
+        this.paint();
 
-        this.setup();
+        /*
+           Pointer events stop the image/page from
+           being dragged while scratching.
+        */
+        this.canvas.addEventListener(
+            "pointerdown",
+            this.start.bind(this),
+            {passive:false}
+        );
+
+        this.canvas.addEventListener(
+            "pointermove",
+            this.move.bind(this),
+            {passive:false}
+        );
+
+        this.canvas.addEventListener(
+            "pointerup",
+            this.end.bind(this),
+            {passive:false}
+        );
+
+        this.canvas.addEventListener(
+            "pointercancel",
+            this.end.bind(this),
+            {passive:false}
+        );
 
         window.addEventListener(
             "resize",
             () => this.resize()
         );
+
     }
 
 
-    resize() {
+    resize(){
 
-        const rect = this.card.getBoundingClientRect();
+        const rect =
+            this.canvas.getBoundingClientRect();
 
-        const dpr = Math.min(
-            window.devicePixelRatio || 1,
-            2
-        );
+        const dpr =
+            Math.min(window.devicePixelRatio || 1,2);
 
-        this.canvas.width = rect.width * dpr;
-        this.canvas.height = rect.height * dpr;
+        this.canvas.width =
+            Math.round(rect.width * dpr);
 
-        this.canvas.style.width = rect.width + "px";
-        this.canvas.style.height = rect.height + "px";
+        this.canvas.height =
+            Math.round(rect.height * dpr);
 
         this.ctx.setTransform(
-            dpr,
-            0,
-            0,
-            dpr,
-            0,
-            0
+            dpr,0,0,dpr,0,0
         );
 
-        this.width = rect.width;
-        this.height = rect.height;
+        if(!this.revealed){
 
-        if (!this.revealed) {
             this.paint();
+
         }
+
     }
 
 
-    paint() {
+    paint(){
+
+        const rect =
+            this.canvas.getBoundingClientRect();
 
         const ctx = this.ctx;
 
-        ctx.globalCompositeOperation = "source-over";
-
-        const gradient = ctx.createLinearGradient(
+        ctx.clearRect(
             0,
             0,
-            this.width,
-            this.height
+            rect.width,
+            rect.height
         );
 
-        gradient.addColorStop(0, "#f5a9bf");
-        gradient.addColorStop(.5, "#e98ba9");
-        gradient.addColorStop(1, "#d96f91");
+        /*
+           Clean scratch surface.
+        */
+
+        const gradient =
+            ctx.createLinearGradient(
+                0,
+                0,
+                rect.width,
+                rect.height
+            );
+
+        gradient.addColorStop(
+            0,
+            "#ffc4d9"
+        );
+
+        gradient.addColorStop(
+            .5,
+            "#ffadc9"
+        );
+
+        gradient.addColorStop(
+            1,
+            "#ffbfd5"
+        );
 
         ctx.fillStyle = gradient;
 
         ctx.fillRect(
             0,
             0,
-            this.width,
-            this.height
+            rect.width,
+            rect.height
         );
 
-        /* subtle shine */
+        /*
+           Subtle shine.
+        */
 
-        const shine = ctx.createLinearGradient(
-            0,
-            0,
-            this.width,
-            this.height
-        );
+        ctx.fillStyle =
+            "rgba(255,255,255,.16)";
 
-        shine.addColorStop(
-            0,
-            "rgba(255,255,255,.42)"
-        );
+        for(let i=0;i<18;i++){
 
-        shine.addColorStop(
-            .45,
-            "rgba(255,255,255,0)"
-        );
+            const x =
+                Math.random()*rect.width;
 
-        ctx.fillStyle = shine;
-
-        ctx.fillRect(
-            0,
-            0,
-            this.width,
-            this.height
-        );
-
-        /* texture dots */
-
-        ctx.fillStyle = "rgba(255,255,255,.12)";
-
-        for (let i = 0; i < 100; i++) {
-
-            const x = Math.random() * this.width;
-            const y = Math.random() * this.height;
+            const y =
+                Math.random()*rect.height;
 
             ctx.beginPath();
 
             ctx.arc(
                 x,
                 y,
-                Math.random() * 1.5,
+                1.5,
                 0,
-                Math.PI * 2
+                Math.PI*2
             );
 
             ctx.fill();
+
         }
 
-        ctx.fillStyle = "rgba(255,255,255,.9)";
+        /*
+           Center heart.
+        */
+
+        ctx.fillStyle =
+            "rgba(255,255,255,.9)";
+
+        ctx.font =
+            "34px Arial";
+
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 
+        ctx.fillText(
+            "♡",
+            rect.width/2,
+            rect.height/2 - 10
+        );
+
         ctx.font =
-            '600 13px "DM Sans", sans-serif';
+            "600 12px DM Sans";
 
         ctx.fillText(
-            "scratch ♡",
-            this.width / 2,
-            this.height / 2
+            "scratch me",
+            rect.width/2,
+            rect.height/2 + 24
         );
+
     }
 
 
-    setup() {
-
-        this.canvas.addEventListener(
-            "pointerdown",
-            e => this.start(e)
-        );
-
-        this.canvas.addEventListener(
-            "pointermove",
-            e => this.move(e)
-        );
-
-        this.canvas.addEventListener(
-            "pointerup",
-            e => this.end(e)
-        );
-
-        this.canvas.addEventListener(
-            "pointercancel",
-            e => this.end(e)
-        );
-
-        this.canvas.addEventListener(
-            "lostpointercapture",
-            e => this.end(e)
-        );
-
-        this.canvas.addEventListener(
-            "pointerleave",
-            e => {
-                if (this.isDown) {
-                    this.move(e);
-                }
-            }
-        );
-    }
-
-
-    point(event) {
+    getPoint(e){
 
         const rect =
             this.canvas.getBoundingClientRect();
 
         return {
-            x: event.clientX - rect.left,
-            y: event.clientY - rect.top
+
+            x:e.clientX - rect.left,
+
+            y:e.clientY - rect.top
+
         };
+
     }
 
 
-    start(event) {
+    start(e){
 
-        if (this.revealed) return;
+        if(this.revealed) return;
 
-        event.preventDefault();
+        e.preventDefault();
+        e.stopPropagation();
 
         this.isDown = true;
 
-        this.lastPoint =
-            this.point(event);
+        /*
+           THIS fixes the "catching/moving image" issue.
+           The pointer becomes locked to this canvas.
+        */
+        try{
 
-        try {
             this.canvas.setPointerCapture(
-                event.pointerId
+                e.pointerId
             );
-        } catch (e) {}
 
-        document.body.classList.add("scratching");
+        }catch(err){}
+
+        const point =
+            this.getPoint(e);
+
+        this.lastX = point.x;
+        this.lastY = point.y;
 
         this.scratch(
-            this.lastPoint.x,
-            this.lastPoint.y
+            point.x,
+            point.y
         );
 
-        playSound();
     }
 
 
-    move(event) {
+    move(e){
 
-        if (!this.isDown || this.revealed) return;
+        if(!this.isDown ||
+           this.revealed) return;
 
-        event.preventDefault();
+        e.preventDefault();
+        e.stopPropagation();
 
-        const point = this.point(event);
+        const point =
+            this.getPoint(e);
 
-        const last = this.lastPoint || point;
+        const distance =
+            Math.hypot(
+                point.x - this.lastX,
+                point.y - this.lastY
+            );
 
-        const distance = Math.hypot(
-            point.x - last.x,
-            point.y - last.y
-        );
+        if(distance > 1){
 
-        const steps = Math.max(
-            1,
-            Math.ceil(distance / 8)
-        );
+            this.scratch(
+                point.x,
+                point.y
+            );
 
-        for (let i = 0; i < steps; i++) {
+            this.lastX = point.x;
+            this.lastY = point.y;
 
-            const t = i / steps;
-
-            const x =
-                last.x +
-                (point.x - last.x) * t;
-
-            const y =
-                last.y +
-                (point.y - last.y) * t;
-
-            this.scratch(x, y);
         }
 
-        this.lastPoint = point;
-
-        if (Math.random() < .05) {
-            this.checkReveal();
-        }
     }
 
 
-    scratch(x, y) {
+    end(e){
+
+        if(!this.isDown) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        this.isDown = false;
+
+        try{
+
+            this.canvas.releasePointerCapture(
+                e.pointerId
+            );
+
+        }catch(err){}
+
+        this.checkProgress();
+
+    }
+
+
+    scratch(x,y){
 
         const ctx = this.ctx;
 
@@ -1530,442 +2440,462 @@ class ScratchCard {
             y,
             25,
             0,
-            Math.PI * 2
+            Math.PI*2
         );
 
         ctx.fill();
 
-        ctx.restore();
-    }
+        /*
+           Make continuous scratching smooth.
+        */
 
+        if(this.lastX !== undefined){
 
-    end(event) {
+            ctx.lineWidth = 50;
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
 
-        if (!this.isDown) return;
+            ctx.beginPath();
 
-        this.isDown = false;
-        this.lastPoint = null;
-
-        document.body.classList.remove("scratching");
-
-        try {
-            this.canvas.releasePointerCapture(
-                event.pointerId
+            ctx.moveTo(
+                this.lastX,
+                this.lastY
             );
-        } catch (e) {}
 
-        this.checkReveal();
+            ctx.lineTo(
+                x,
+                y
+            );
+
+            ctx.stroke();
+
+        }
+
+        ctx.restore();
+
     }
 
 
-    checkReveal() {
+    checkProgress(){
 
-        if (this.revealed) return;
+        if(this.revealed) return;
 
-        const smallWidth = 50;
-        const smallHeight = 50;
+        const rect =
+            this.canvas.getBoundingClientRect();
 
-        const temp = document.createElement("canvas");
-
-        temp.width = smallWidth;
-        temp.height = smallHeight;
-
-        const tempCtx = temp.getContext(
-            "2d",
-            { willReadFrequently: true }
-        );
-
-        tempCtx.drawImage(
-            this.canvas,
-            0,
-            0,
-            smallWidth,
-            smallHeight
-        );
-
-        const pixels =
-            tempCtx.getImageData(
+        const sample =
+            this.ctx.getImageData(
                 0,
                 0,
-                smallWidth,
-                smallHeight
-            ).data;
+                this.canvas.width,
+                this.canvas.height
+            );
 
         let transparent = 0;
 
-        for (let i = 3; i < pixels.length; i += 4) {
+        /*
+           Sample pixels rather than checking every pixel.
+        */
 
-            if (pixels[i] < 80) {
+        for(
+            let i=3;
+            i<sample.data.length;
+            i+=40
+        ){
+
+            if(sample.data[i] < 80){
+
                 transparent++;
+
             }
+
         }
 
-        const percentage =
-            transparent / (pixels.length / 4);
+        const total =
+            sample.data.length / 40;
 
-        if (percentage >= .42) {
+        const percent =
+            transparent / total;
+
+        if(percent > .48){
+
             this.reveal();
+
         }
+
     }
 
 
-    reveal() {
+    reveal(){
 
-        if (this.revealed) return;
+        if(this.revealed) return;
 
         this.revealed = true;
 
         this.card.classList.add("revealed");
 
+        this.canvas.classList.add("revealed");
+
         state.revealed++;
 
-        updateCounter();
         saveState();
 
-        playSound("reveal");
+        playSound();
 
         const rect =
             this.card.getBoundingClientRect();
 
         heartBurst(
-            rect.left + rect.width / 2,
-            rect.top + rect.height / 2
+            rect.left + rect.width/2,
+            rect.top + rect.height/2
         );
+
     }
+
 }
 
 
 /* =========================================================
    CREATE CARDS
-   ========================================================= */
+========================================================= */
 
-let scratchCards = [];
+let activeCards = [];
 
+function createCards(){
 
-function createCards() {
+    activeCards = [];
 
     cardsEl.innerHTML = "";
-    scratchCards = [];
 
     const selected =
-        shuffleArray(messages).slice(0, 3);
+        getNewMessages(3);
 
-    state.currentMessages = selected;
+    selected.forEach(
+        (message,index) => {
 
-    selected.forEach((message, index) => {
+            const card =
+                document.createElement("article");
 
-        const card = document.createElement("article");
+            card.className = "card";
 
-        card.className = "card";
+            card.innerHTML = `
 
-        card.innerHTML = `
-            <div class="message">
-                <div class="heart">♥</div>
-                <p>${message}</p>
-            </div>
+                <div class="card-number">
+                    0${index+1}
+                </div>
 
-            <button
-                class="favourite"
-                aria-label="Save favourite"
-                title="Save favourite"
-            >
-                ♡
-            </button>
+                <div class="card-inner">
 
-            <canvas class="scratch"></canvas>
-        `;
+                    <div class="card-icon">
+                        ♡
+                    </div>
 
-        cardsEl.appendChild(card);
+                    <div class="message">
+                        ${escapeHTML(message)}
+                    </div>
 
-        const favouriteButton =
-            card.querySelector(".favourite");
+                    <button
+                        class="fav-btn"
+                        aria-label="Favourite"
+                    >
+                        ♡
+                    </button>
 
-        favouriteButton.addEventListener(
-            "click",
-            event => {
+                </div>
 
-                event.stopPropagation();
+                <canvas
+                    class="scratch-layer"
+                ></canvas>
 
-                const saved =
-                    state.favourites.includes(message);
+            `;
 
-                if (saved) {
+            cardsEl.appendChild(card);
 
-                    state.favourites =
-                        state.favourites.filter(
-                            item => item !== message
-                        );
+            setupTilt(card);
 
-                } else {
+            const fav =
+                card.querySelector(".fav-btn");
 
-                    state.favourites.push(message);
+            if(
+                state.favourites.includes(message)
+            ){
 
-                    heartBurst(
-                        event.clientX,
-                        event.clientY
+                fav.classList.add("active");
+                fav.textContent = "♥";
+
+            }
+
+            fav.addEventListener(
+                "click",
+                e => {
+
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    toggleFavourite(
+                        message,
+                        fav
                     );
-                }
 
-                updateFavouriteButton(
-                    favouriteButton,
+                }
+            );
+
+            const scratch =
+                new ScratchCard(
+                    card,
                     message
                 );
 
-                updateFavourites();
+            activeCards.push(scratch);
 
-                saveState();
-
-                playSound();
-            }
-        );
-
-        const scratch =
-            new ScratchCard(card);
-
-        scratchCards.push(scratch);
-
-        updateFavouriteButton(
-            favouriteButton,
-            message
-        );
-    });
-}
-
-
-function updateFavouriteButton(button, message) {
-
-    const saved =
-        state.favourites.includes(message);
-
-    button.classList.toggle(
-        "saved",
-        saved
+        }
     );
 
-    button.textContent =
-        saved ? "♥" : "♡";
 }
 
 
 /* =========================================================
-   COUNTER
-   ========================================================= */
+   ESCAPE HTML
+========================================================= */
 
-function updateCounter() {
+function escapeHTML(str){
 
-    revealedCountEl.textContent =
-        state.revealed;
+    const div =
+        document.createElement("div");
+
+    div.textContent = str;
+
+    return div.innerHTML;
+
 }
-
-
-/* =========================================================
-   REVEAL ALL
-   ========================================================= */
-
-document
-    .getElementById("revealBtn")
-    .addEventListener("click", () => {
-
-        scratchCards.forEach(card => {
-            card.reveal();
-        });
-
-        playSound("reveal");
-    });
-
-
-/* =========================================================
-   NEW CARDS
-   ========================================================= */
-
-document
-    .getElementById("shuffleBtn")
-    .addEventListener("click", () => {
-
-        createCards();
-
-        playSound();
-
-        lottery.animate(
-            [
-                {
-                    opacity: 0,
-                    transform: "translateY(10px) scale(.98)"
-                },
-                {
-                    opacity: 1,
-                    transform: "translateY(0) scale(1)"
-                }
-            ],
-            {
-                duration: 450,
-                easing: "cubic-bezier(.2,.8,.2,1)"
-            }
-        );
-    });
-
-
-/* =========================================================
-   3D TILT
-   ========================================================= */
-
-lottery.addEventListener(
-    "pointermove",
-    event => {
-
-        if (
-            state.reducedMotion ||
-            window.innerWidth < 700 ||
-            document.body.classList.contains("scratching")
-        ) return;
-
-        const rect =
-            lottery.getBoundingClientRect();
-
-        const x =
-            (event.clientX - rect.left) /
-            rect.width -
-            .5;
-
-        const y =
-            (event.clientY - rect.top) /
-            rect.height -
-            .5;
-
-        const rotateY = x * 5;
-        const rotateX = -y * 5;
-
-        lottery.style.transform =
-            `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    }
-);
-
-
-lottery.addEventListener(
-    "pointerleave",
-    () => {
-
-        lottery.style.transform =
-            "rotateX(0deg) rotateY(0deg)";
-    }
-);
-
-
-/* =========================================================
-   PANELS
-   ========================================================= */
-
-function openPanel(panel) {
-
-    overlay.classList.add("open");
-    panel.classList.add("open");
-}
-
-
-function closePanels() {
-
-    overlay.classList.remove("open");
-    settingsPanel.classList.remove("open");
-    favouritesPanel.classList.remove("open");
-}
-
-
-document
-    .getElementById("settingsBtn")
-    .addEventListener("click", () => {
-
-        openPanel(settingsPanel);
-        playSound();
-    });
-
-
-document
-    .getElementById("closeSettings")
-    .addEventListener("click", closePanels);
-
-
-document
-    .getElementById("favouritesBtn")
-    .addEventListener("click", () => {
-
-        updateFavourites();
-
-        openPanel(favouritesPanel);
-
-        playSound();
-    });
-
-
-document
-    .getElementById("closeFavourites")
-    .addEventListener("click", closePanels);
-
-
-overlay.addEventListener(
-    "click",
-    closePanels
-);
 
 
 /* =========================================================
    FAVOURITES
-   ========================================================= */
+========================================================= */
 
-function updateFavourites() {
+function toggleFavourite(
+    message,
+    button
+){
 
-    favouritesList.innerHTML = "";
+    const index =
+        state.favourites.indexOf(message);
 
-    if (!state.favourites.length) {
+    if(index === -1){
 
-        favouritesList.innerHTML = `
-            <div class="favourite-item">
-                nothing saved yet ♡
-            </div>
-        `;
+        state.favourites.push(message);
 
-        return;
+        button.classList.add("active");
+
+        button.textContent = "♥";
+
+    }else{
+
+        state.favourites.splice(
+            index,
+            1
+        );
+
+        button.classList.remove("active");
+
+        button.textContent = "♡";
+
     }
 
-    state.favourites.forEach(message => {
+    saveState();
 
-        const item =
+    renderFavourites();
+
+}
+
+
+function renderFavourites(){
+
+    favList.innerHTML = "";
+
+    if(state.favourites.length === 0){
+
+        const empty =
             document.createElement("div");
 
-        item.className =
-            "favourite-item";
+        empty.className = "fav-item";
 
-        item.textContent = message;
+        empty.textContent =
+            "no favourites yet ♡";
 
-        favouritesList.appendChild(item);
-    });
+        favList.appendChild(empty);
+
+        return;
+
+    }
+
+    [...state.favourites]
+        .reverse()
+        .forEach(message => {
+
+            const item =
+                document.createElement("div");
+
+            item.className = "fav-item";
+
+            item.textContent =
+                message;
+
+            favList.appendChild(item);
+
+        });
+
 }
 
 
 /* =========================================================
-   SETTINGS TOGGLES
-   ========================================================= */
+   FAVOURITES PANEL
+========================================================= */
 
-function updateToggles() {
+favouritesBtn.addEventListener(
+    "click",
+    () => {
 
-    petalsToggle.classList.toggle(
+        menu.classList.remove("open");
+
+        renderFavourites();
+
+        favourites.classList.add("open");
+
+    }
+);
+
+closeFav.addEventListener(
+    "click",
+    () => {
+
+        favourites.classList.remove("open");
+
+    }
+);
+
+favourites.addEventListener(
+    "click",
+    e => {
+
+        if(e.target === favourites){
+
+            favourites.classList.remove("open");
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   PETALS
+========================================================= */
+
+let petalInterval = null;
+
+function makePetal(){
+
+    if(!state.petals) return;
+
+    const petal =
+        document.createElement("div");
+
+    petal.className = "petal";
+
+    petal.style.left =
+        `${Math.random()*100}%`;
+
+    petal.style.setProperty(
+        "--x",
+        `${(Math.random()-.5)*240}px`
+    );
+
+    petal.style.animationDuration =
+        `${5 + Math.random()*6}s`;
+
+    petal.style.opacity =
+        `${.2 + Math.random()*.35}`;
+
+    petal.style.transform =
+        `rotate(${Math.random()*180}deg)`;
+
+    petalsEl.appendChild(petal);
+
+    setTimeout(
+        () => petal.remove(),
+        12000
+    );
+
+}
+
+
+function startPetals(){
+
+    clearInterval(petalInterval);
+
+    if(!state.petals) return;
+
+    petalInterval =
+        setInterval(
+            makePetal,
+            650
+        );
+
+}
+
+
+function updatePetals(){
+
+    petalsEl.innerHTML = "";
+
+    if(state.petals){
+
+        startPetals();
+
+    }else{
+
+        clearInterval(
+            petalInterval
+        );
+
+    }
+
+    petalSwitch.classList.toggle(
         "active",
         state.petals
     );
 
-    soundToggle.classList.toggle(
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+function updateSettings(){
+
+    petalSwitch.classList.toggle(
+        "active",
+        state.petals
+    );
+
+    soundSwitch.classList.toggle(
         "active",
         state.sound
     );
 
-    motionToggle.classList.toggle(
+    motionSwitch.classList.toggle(
         "active",
         state.reducedMotion
     );
 
     document.body.classList.toggle(
-        "reduced-motion",
+        "reduce-motion",
         state.reducedMotion
     );
+
 }
 
 
@@ -1973,20 +2903,15 @@ petalsToggle.addEventListener(
     "click",
     () => {
 
-        state.petals = !state.petals;
+        state.petals =
+            !state.petals;
 
-        updateToggles();
         saveState();
 
-        if (state.petals) {
-            startPetals();
-        } else {
-            document.getElementById(
-                "petals"
-            ).innerHTML = "";
-        }
+        updateSettings();
 
-        playSound();
+        updatePetals();
+
     }
 );
 
@@ -1995,14 +2920,19 @@ soundToggle.addEventListener(
     "click",
     () => {
 
-        state.sound = !state.sound;
+        state.sound =
+            !state.sound;
 
-        updateToggles();
         saveState();
 
-        if (state.sound) {
+        updateSettings();
+
+        if(state.sound){
+
             playSound();
+
         }
+
     }
 );
 
@@ -2014,145 +2944,107 @@ motionToggle.addEventListener(
         state.reducedMotion =
             !state.reducedMotion;
 
-        updateToggles();
         saveState();
 
-        playSound();
+        updateSettings();
+
+        /*
+           Rebuild tilt behaviour if motion changes.
+        */
+
+        createCards();
+
     }
 );
 
 
 /* =========================================================
    RESET
-   ========================================================= */
+========================================================= */
 
-document
-    .getElementById("resetBtn")
-    .addEventListener("click", () => {
+resetBtn.addEventListener(
+    "click",
+    () => {
 
+        state.usedMessages = [];
         state.revealed = 0;
 
         saveState();
-        updateCounter();
+
+        menu.classList.remove("open");
 
         createCards();
 
-        closePanels();
-
-        playSound();
-    });
-
-
-/* =========================================================
-   CLEAR FAVOURITES
-   ========================================================= */
-
-document
-    .getElementById("clearFavsBtn")
-    .addEventListener("click", () => {
-
-        state.favourites = [];
-
-        saveState();
-
-        updateFavourites();
-
-        document
-            .querySelectorAll(".favourite")
-            .forEach(button => {
-
-                button.classList.remove("saved");
-                button.textContent = "♡";
-            });
-
-        playSound();
-    });
-
-
-/* =========================================================
-   PETALS
-   ========================================================= */
-
-function createPetal() {
-
-    if (!state.petals || state.reducedMotion) {
-        return;
-    }
-
-    const container =
-        document.getElementById("petals");
-
-    const petal =
-        document.createElement("div");
-
-    petal.className = "petal";
-
-    petal.style.left =
-        `${Math.random() * 100}%`;
-
-    petal.style.setProperty(
-        "--drift",
-        `${(Math.random() - .5) * 220}px`
-    );
-
-    const duration =
-        7 + Math.random() * 7;
-
-    petal.style.animationDuration =
-        `${duration}s`;
-
-    petal.style.transform =
-        `rotate(${Math.random() * 360}deg)`;
-
-    container.appendChild(petal);
-
-    setTimeout(
-        () => petal.remove(),
-        duration * 1000
-    );
-}
-
-
-let petalInterval;
-
-
-function startPetals() {
-
-    clearInterval(petalInterval);
-
-    if (!state.petals || state.reducedMotion) {
-        return;
-    }
-
-    petalInterval =
-        setInterval(createPetal, 850);
-}
-
-
-/* =========================================================
-   KEYBOARD
-   ========================================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (event.key === "Escape") {
-            closePanels();
-        }
     }
 );
 
 
 /* =========================================================
-   INITIALISE
-   ========================================================= */
+   BUTTONS
+========================================================= */
 
-updateToggles();
-updateCounter();
-updateFavourites();
+shuffleBtn.addEventListener(
+    "click",
+    () => {
+
+        createCards();
+
+    }
+);
+
+
+revealBtn.addEventListener(
+    "click",
+    () => {
+
+        activeCards.forEach(
+            scratch => {
+
+                scratch.reveal();
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   PREVENT DRAGGING
+   This is the other part that stops the page from
+   "catching" the card/image while scratching.
+========================================================= */
+
+document.addEventListener(
+    "dragstart",
+    e => {
+
+        if(
+            e.target.closest(".card") ||
+            e.target.closest(".scratch-layer")
+        ){
+
+            e.preventDefault();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+loadState();
+
+updateSettings();
+
+updatePetals();
+
+renderFavourites();
+
 createCards();
-startPetals();
 
 </script>
 
