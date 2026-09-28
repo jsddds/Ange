@@ -1,0 +1,2148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love lottery ♡</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --pink:#ff6f9f;
+    --pink-light:#ffd6e4;
+    --pink-soft:#fff0f5;
+    --pink-dark:#d94d7d;
+    --white:#fff;
+    --text:#442b35;
+    --muted:#9b7885;
+    --shadow:0 20px 60px rgba(210,91,130,.16);
+}
+
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    margin:0;
+    min-height:100%;
+}
+
+body{
+    font-family:"DM Sans",sans-serif;
+    color:var(--text);
+    background:
+        radial-gradient(circle at 15% 15%,rgba(255,182,210,.35),transparent 30%),
+        radial-gradient(circle at 85% 10%,rgba(255,213,226,.45),transparent 30%),
+        linear-gradient(135deg,#fff8fb,#fff0f5 50%,#fff9fc);
+    overflow-x:hidden;
+}
+
+button{
+    font:inherit;
+}
+
+button,
+canvas,
+.card{
+    -webkit-user-select:none;
+    user-select:none;
+}
+
+button{
+    border:0;
+    cursor:pointer;
+}
+
+.page{
+    width:min(1180px,calc(100% - 36px));
+    margin:auto;
+    padding:30px 0 70px;
+    position:relative;
+    z-index:2;
+}
+
+/* =========================
+   TOP BAR
+========================= */
+
+.topbar{
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    height:50px;
+    position:relative;
+    z-index:50;
+}
+
+.menu-wrap{
+    position:relative;
+}
+
+.menu-btn{
+    width:48px;
+    height:48px;
+    border-radius:16px;
+    background:rgba(255,255,255,.78);
+    box-shadow:0 10px 30px rgba(190,75,115,.12);
+    color:var(--pink-dark);
+    font-size:22px;
+    transition:.25s ease;
+    backdrop-filter:blur(12px);
+}
+
+.menu-btn:hover{
+    transform:translateY(-2px) rotate(2deg);
+    box-shadow:0 14px 35px rgba(190,75,115,.18);
+}
+
+.menu-btn:active{
+    transform:scale(.94);
+}
+
+.menu{
+    position:absolute;
+    right:0;
+    top:58px;
+    width:250px;
+    padding:10px;
+    border-radius:22px;
+    background:rgba(255,255,255,.96);
+    box-shadow:0 25px 70px rgba(173,65,105,.2);
+    border:1px solid rgba(255,255,255,.9);
+    backdrop-filter:blur(20px);
+    opacity:0;
+    transform:translateY(-8px) scale(.96);
+    pointer-events:none;
+    transition:.2s ease;
+}
+
+.menu.open{
+    opacity:1;
+    transform:translateY(0) scale(1);
+    pointer-events:auto;
+}
+
+.menu-item{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:13px 12px;
+    border-radius:14px;
+    background:transparent;
+    color:var(--text);
+    text-align:left;
+    transition:.2s;
+}
+
+.menu-item:hover{
+    background:var(--pink-soft);
+}
+
+.menu-label{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    font-size:14px;
+}
+
+.toggle{
+    width:40px;
+    height:23px;
+    border-radius:20px;
+    background:#eadde2;
+    padding:3px;
+    transition:.25s;
+}
+
+.toggle span{
+    display:block;
+    width:17px;
+    height:17px;
+    border-radius:50%;
+    background:white;
+    box-shadow:0 2px 5px rgba(0,0,0,.12);
+    transition:.25s;
+}
+
+.toggle.active{
+    background:var(--pink);
+}
+
+.toggle.active span{
+    transform:translateX(17px);
+}
+
+.menu-divider{
+    height:1px;
+    background:#f2e4e9;
+    margin:6px 4px;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+    text-align:center;
+    max-width:760px;
+    margin:30px auto 45px;
+}
+
+.eyebrow{
+    color:var(--pink-dark);
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:3px;
+    margin-bottom:13px;
+}
+
+h1{
+    margin:0;
+    font-family:"Playfair Display",serif;
+    font-size:clamp(44px,7vw,78px);
+    line-height:.95;
+    font-weight:500;
+    letter-spacing:-2px;
+}
+
+h1 em{
+    color:var(--pink);
+}
+
+.hero-heart{
+    display:inline-block;
+    animation:heartFloat 2.7s ease-in-out infinite;
+}
+
+@keyframes heartFloat{
+    0%,100%{transform:translateY(0) rotate(-4deg)}
+    50%{transform:translateY(-7px) rotate(4deg)}
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:25px;
+    perspective:1400px;
+}
+
+.card{
+    position:relative;
+    min-height:410px;
+    border-radius:30px;
+    background:rgba(255,255,255,.78);
+    border:1px solid rgba(255,255,255,.9);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    transform-style:preserve-3d;
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+    will-change:transform;
+}
+
+.card:hover{
+    box-shadow:0 28px 75px rgba(210,91,130,.22);
+}
+
+.card-inner{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:35px;
+    text-align:center;
+    transform:translateZ(35px);
+    pointer-events:none;
+}
+
+.card-number{
+    position:absolute;
+    top:22px;
+    left:24px;
+    font-size:12px;
+    font-weight:700;
+    color:#d99aae;
+    letter-spacing:2px;
+}
+
+.card-icon{
+    width:66px;
+    height:66px;
+    display:grid;
+    place-items:center;
+    border-radius:22px;
+    background:var(--pink-soft);
+    color:var(--pink);
+    font-size:28px;
+    margin-bottom:25px;
+    box-shadow:inset 0 0 0 1px rgba(255,111,159,.08);
+}
+
+.message{
+    font-family:"Playfair Display",serif;
+    font-style:italic;
+    font-size:22px;
+    line-height:1.45;
+    color:#53343f;
+}
+
+.fav-btn{
+    pointer-events:auto;
+    margin-top:25px;
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#fff;
+    color:#dca3b4;
+    box-shadow:0 8px 20px rgba(150,70,100,.1);
+    transition:.2s;
+}
+
+.fav-btn:hover{
+    transform:scale(1.1);
+}
+
+.fav-btn.active{
+    color:var(--pink);
+    background:#fff0f5;
+}
+
+/* =========================
+   SCRATCH CANVAS
+========================= */
+
+.scratch-layer{
+    position:absolute;
+    inset:0;
+    z-index:10;
+    cursor:crosshair;
+
+    /*
+       THIS IS IMPORTANT:
+       Prevents the browser from treating scratching
+       as page/card dragging or scrolling.
+    */
+    touch-action:none;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+
+    pointer-events:auto;
+    display:block;
+    width:100%;
+    height:100%;
+    max-width:none;
+    max-height:none;
+    margin:0;
+    padding:0;
+    border:0;
+    border-radius:inherit;
+    box-sizing:border-box;
+}
+
+.scratch-layer.revealed{
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .45s ease;
+}
+
+.card.revealed .scratch-layer{
+    opacity:0;
+    pointer-events:none;
+}
+
+/* =========================
+   BOTTOM CONTROLS
+========================= */
+
+.controls{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:30px;
+}
+
+.action{
+    padding:13px 19px;
+    border-radius:16px;
+    background:#fff;
+    color:var(--pink-dark);
+    box-shadow:0 10px 25px rgba(190,75,115,.1);
+    font-weight:600;
+    transition:.2s;
+}
+
+.action:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 32px rgba(190,75,115,.16);
+}
+
+.action.primary{
+    background:var(--pink);
+    color:#fff;
+}
+
+.action:active{
+    transform:scale(.96);
+}
+
+/* =========================
+   FAVOURITES
+========================= */
+
+.favourites{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(77,37,50,.2);
+    backdrop-filter:blur(8px);
+    opacity:0;
+    pointer-events:none;
+    transition:.25s;
+}
+
+.favourites.open{
+    opacity:1;
+    pointer-events:auto;
+}
+
+.fav-panel{
+    width:min(650px,100%);
+    max-height:80vh;
+    overflow:auto;
+    background:#fff;
+    border-radius:28px;
+    padding:28px;
+    box-shadow:0 30px 100px rgba(100,35,60,.25);
+    transform:translateY(15px) scale(.97);
+    transition:.25s;
+}
+
+.favourites.open .fav-panel{
+    transform:translateY(0) scale(1);
+}
+
+.panel-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.panel-head h2{
+    margin:0;
+    font-family:"Playfair Display",serif;
+    font-weight:500;
+}
+
+.close-btn{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:var(--pink-soft);
+    color:var(--pink-dark);
+}
+
+.fav-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.fav-item{
+    padding:16px;
+    border-radius:17px;
+    background:#fff7fa;
+    font-family:"Playfair Display",serif;
+    font-style:italic;
+    line-height:1.4;
+}
+
+/* =========================
+   PETALS
+========================= */
+
+.petals{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    z-index:1;
+}
+
+.petal{
+    position:absolute;
+    top:-30px;
+    width:12px;
+    height:17px;
+    border-radius:70% 30% 70% 30%;
+    background:rgba(255,135,174,.35);
+    animation:fall linear forwards;
+}
+
+@keyframes fall{
+    to{
+        transform:translate3d(var(--x),110vh,0) rotate(720deg);
+    }
+}
+
+/* =========================
+   HEART BURST
+========================= */
+
+.burst-heart{
+    position:fixed;
+    pointer-events:none;
+    z-index:200;
+    font-size:18px;
+    animation:burst 900ms ease-out forwards;
+}
+
+@keyframes burst{
+    0%{
+        opacity:1;
+        transform:translate(-50%,-50%) scale(.5);
+    }
+    100%{
+        opacity:0;
+        transform:
+            translate(
+                calc(-50% + var(--bx)),
+                calc(-50% + var(--by))
+            )
+            scale(1.35)
+            rotate(var(--rot));
+    }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:850px){
+    .cards{
+        grid-template-columns:1fr;
+        max-width:520px;
+        margin:auto;
+    }
+
+    .card{
+        min-height:360px;
+    }
+
+    .hero{
+        margin-top:20px;
+    }
+}
+
+@media(prefers-reduced-motion:reduce){
+    *{
+        scroll-behavior:auto!important;
+    }
+}
+
+/* User setting */
+body.reduce-motion *,
+body.reduce-motion *::before,
+body.reduce-motion *::after{
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.001ms!important;
+}
+</style>
+</head>
+
+<body>
+
+<div class="petals" id="petals"></div>
+
+<div class="page">
+
+    <div class="topbar">
+        <div class="menu-wrap">
+
+            <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+                ☰
+            </button>
+
+            <div class="menu" id="menu">
+
+                <button class="menu-item" id="favouritesBtn">
+                    <span class="menu-label">
+                        ♡
+                        <span>favourites</span>
+                    </span>
+                </button>
+
+                <div class="menu-divider"></div>
+
+                <button class="menu-item" id="petalsToggle">
+                    <span class="menu-label">
+                        🌸
+                        <span>falling petals</span>
+                    </span>
+                    <span class="toggle" id="petalSwitch">
+                        <span></span>
+                    </span>
+                </button>
+
+                <button class="menu-item" id="soundToggle">
+                    <span class="menu-label">
+                        ♫
+                        <span>sound</span>
+                    </span>
+                    <span class="toggle" id="soundSwitch">
+                        <span></span>
+                    </span>
+                </button>
+
+                <button class="menu-item" id="motionToggle">
+                    <span class="menu-label">
+                        ✦
+                        <span>reduced motion</span>
+                    </span>
+                    <span class="toggle" id="motionSwitch">
+                        <span></span>
+                    </span>
+                </button>
+
+                <div class="menu-divider"></div>
+
+                <button class="menu-item" id="resetBtn">
+                    <span class="menu-label">
+                        ↻
+                        <span>reset lottery</span>
+                    </span>
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <section class="hero">
+        <div class="eyebrow">a little something for you</div>
+
+        <h1>
+            Love lottery
+            <span class="hero-heart">♡</span>
+        </h1>
+    </section>
+
+    <main class="cards" id="cards"></main>
+
+    <div class="controls">
+        <button class="action primary" id="shuffleBtn">
+            new ones ♡
+        </button>
+
+        <button class="action" id="revealBtn">
+            reveal all
+        </button>
+    </div>
+
+</div>
+
+<!-- FAVOURITES -->
+
+<div class="favourites" id="favourites">
+    <div class="fav-panel">
+
+        <div class="panel-head">
+            <h2>your favourites ♡</h2>
+            <button class="close-btn" id="closeFav">×</button>
+        </div>
+
+        <div class="fav-list" id="favList"></div>
+
+    </div>
+</div>
+
+<script>
+
+/* =========================================================
+   200 UNIQUE MESSAGES
+   ========================================================= */
+
+const messages = [
+
+"i'd still pick you even if the lottery had a million choices",
+"somehow you make ordinary days feel like something worth keeping",
+"you are definitely my favourite notification",
+"i hope you know how ridiculously easy you are to love",
+"if i had to choose again, i'd still choose you",
+"you make my bad days feel a little less bad",
+"you somehow make doing absolutely nothing feel fun",
+"you are my favourite person to bother",
+"life got a little sweeter when you showed up",
+"i like you an unreasonable amount and i'm not fixing it",
+"you have no idea how often you randomly cross my mind",
+"you are the plot twist i actually wanted",
+"i'd save you the last piece of dessert",
+"you make my heart do the stupid little thing",
+"if loving you was a lottery, i'd buy every ticket",
+"you are my favourite kind of distraction",
+"i could listen to you talk about random things forever",
+"you make everything feel a bit warmer",
+"you're basically my favourite part of the day",
+"i'd choose your laugh every single time",
+"you are very unfairly easy to miss",
+"i hope i never get used to having you around",
+"you make even boring conversations worth having",
+"somewhere between meeting you and now, you became my favourite",
+"you are the person i want to tell the dumbest things to",
+"i'd rather have one ordinary day with you than a perfect day without you",
+"you make my brain forget what it was supposed to be doing",
+"you are proof that good surprises exist",
+"i like the way my day feels when i know you're in it",
+"you're one of those people i could never get tired of",
+"you make me smile at my phone like an idiot",
+"i'd pick your company over almost anything",
+"you are my favourite little coincidence",
+"you make everything feel slightly more exciting",
+"i really hope you know how special you are to me",
+"you somehow became someone i never want to lose",
+"i like you more than this tiny card can explain",
+"you make my favourite memories even better",
+"if there were bonus points for being adorable, you'd win",
+"you are my favourite reason to check my phone",
+"i would absolutely rig this lottery in your favour",
+"you are the prize i wasn't even looking for",
+"you make my heart forget how to behave",
+"i like having you in my life more than i can say",
+"you make the little things feel important",
+"i'd choose another thousand days with you",
+"you're pretty much impossible not to adore",
+"you make me want to remember the smallest moments",
+"i like us. a lot.",
+"you are my favourite person to randomly think about",
+"you make happiness feel less complicated",
+"i'd keep choosing you until the tickets ran out",
+"you are the reason this lottery is obviously rigged",
+"you make my world feel a little softer",
+"i love the way you can make me laugh without even trying",
+"you are the kind of person i'd look for in every crowd",
+"you make being around you feel ridiculously natural",
+"i'd rather get stuck somewhere with you than be anywhere alone",
+"you are my favourite person to waste time with",
+"i don't need luck when i already have you",
+"you make every tiny moment feel like a memory",
+"i hope you never forget how much you mean to me",
+"you are my favourite chapter and i'm not ready for the ending",
+"you make my day better without even knowing it",
+"if i could replay one thing, i'd probably choose a random moment with you",
+"you are very easily my favourite human",
+"i'd pick you in every universe with suspiciously good accuracy",
+"you make my heart feel ridiculously full",
+"you are the person i want beside me for the random stuff",
+"i like your existence. especially when it's near mine.",
+"you make everything more fun just by being there",
+"i would absolutely share my fries with you",
+"you are worth every cheesy sentence i could possibly write",
+"you make me want to be better without asking me to",
+"i'm still not over how lucky i feel to know you",
+"you are the best kind of problem to have",
+"i could never put a price on having you in my life",
+"you are my favourite little piece of chaos",
+"you make the world feel less boring",
+"i'd choose your smile over winning the lottery",
+"you are somehow both my peace and my favourite distraction",
+"i like the person i am when i'm around you",
+"you make my heart happier than it has any right to be",
+"you're the person i'd send a completely pointless meme to",
+"i would save you a seat even if there were no seats left",
+"you make even silence feel comfortable",
+"i'm pretty sure you stole a suspiciously large part of my heart",
+"you are the one notification i never want muted",
+"you make me look forward to things i normally wouldn't",
+"i'd choose you before the ticket was even printed",
+"you are my favourite reason to smile for no reason",
+"you make everything feel a little more like home",
+"i like every version of a day that includes you",
+"you are absolutely worth being cheesy for",
+"i'd still find you if the universe shuffled everyone around",
+"you make my life more interesting in the best way",
+"you are my favourite person to accidentally spend hours talking to",
+"i hope i get to make you smile as much as you make me smile",
+"you are the best thing this lottery could possibly reveal",
+"you make random tuesdays feel suspiciously special",
+"i'd pick you even if the winning ticket was sitting right beside yours",
+"you are my favourite reason to lose track of time",
+"you somehow make my brain go quiet in the nicest way",
+"i like knowing there is someone like you in my corner",
+"you are the person i want to share stupid jokes with",
+"i'd save the weirdest story of my day just to tell you",
+"you make every conversation feel like my favourite one",
+"you are dangerously good at making me smile",
+"i'd happily spend another hundred boring afternoons with you",
+"you make my world a little brighter without trying",
+"i like your laugh more than i probably should admit",
+"you are the first person i'd look for in a room",
+"you make ordinary memories feel weirdly important",
+"i'd choose your company even if the alternative came with free pizza",
+"you are my favourite person to annoy lovingly",
+"you make me forget that i was supposed to be productive",
+"you are the kind of lucky i don't want to spend",
+"i'd keep your name in every version of my future",
+"you make small moments stick in my head",
+"i like how easily you can turn my mood around",
+"you are my favourite reason to stay up a little longer",
+"i would absolutely pick your card again",
+"you make being myself feel easy",
+"you are one of the few people who can make me laugh instantly",
+"i like the little world we make when it's just us talking",
+"you make every good thing feel even better",
+"i'd choose you even if this lottery had terrible odds",
+"you are my favourite kind of lucky",
+"you make my heart act like it has never seen a person before",
+"i'd give you the last cookie and complain about it dramatically",
+"you make every random photo ten times better",
+"i love how you can make nothing feel like something",
+"you are the person i want to celebrate tiny wins with",
+"i'd pick another conversation with you over almost any plan",
+"you make my days have better endings",
+"you are far too easy to care about",
+"i like that i can be weird around you",
+"you make the world seem a little less serious",
+"i would absolutely cheat at this lottery if necessary",
+"you are my favourite person to share completely useless information with",
+"you make me want to remember every little thing",
+"i like how your presence changes the whole mood",
+"you are the reason i understand why people write cheesy things",
+"i'd choose you even if there were fireworks involved in every other option",
+"you make my favourite moments happen accidentally",
+"you are my favourite person to have absolutely no plan with",
+"i like that you can make me laugh when i wasn't even trying to smile",
+"you make every little hello feel nice",
+"you are the person i'd want beside me when everything gets weird",
+"i would gladly lose this lottery if it meant finding you again",
+"you make my brain keep collecting memories of you",
+"you are the kind of person who makes leaving feel too soon",
+"i like having someone as wonderful as you to think about",
+"you make the boring parts of life much easier",
+"you are my favourite reason to say just one more thing",
+"i'd choose you over a lifetime supply of snacks. probably.",
+"you make my heart feel like it has somewhere to go",
+"you are my favourite person to tell good news to",
+"i like every little thing that somehow led me to you",
+"you make me want to keep the smallest memories",
+"you are the person i would choose when there are no good options",
+"i'd pick your smile even on the hardest day",
+"you make the world feel less lonely",
+"i like that you exist at the exact same time as me",
+"you are the best unexpected part of my life",
+"i'd still choose you after seeing every possible outcome",
+"you make my favourite songs hit a little differently",
+"you are the person who can make waiting feel worth it",
+"i like how you somehow make time disappear",
+"you are my favourite little thought that keeps coming back",
+"i'd choose you even if the universe tried to reroll",
+"you make every tiny joke funnier",
+"you are the person i'd want to get lost with",
+"i like that my happiest memories have you somewhere in them",
+"you make my heart ridiculously easy to impress",
+"i would absolutely keep your ticket forever",
+"you are the reason my phone screen gets smiled at",
+"i like the way you make everything feel less complicated",
+"you are my favourite person to do absolutely nothing with",
+"i'd choose you even if the prize was unlimited money",
+"you make me care about moments i would normally forget",
+"you are one of my favourite things that isn't technically a thing",
+"i like how you can turn a normal day into a good one",
+"you make my heart feel like it won something",
+"i'd rather share a bad joke with you than hear a perfect one alone",
+"you are the person i want around when i'm having a terrible day",
+"i like that i never have to force a conversation with you",
+"you make the little things worth noticing",
+"you are my favourite human-shaped plot twist",
+"i'd choose your company even if there were snacks involved elsewhere",
+"you make my world feel more colourful",
+"i like knowing i can always think of you and smile",
+"you are the reason my favourite memories keep getting longer",
+"i'd pick you again without even reading the rules",
+"you make being lucky feel very underrated",
+"you are my favourite reason to be sentimental",
+"i like that you can make me laugh with one sentence",
+"you make every day have at least one good part",
+"you are the person i would save the good seat for",
+"i'd choose you even if there were only one ticket left"
+
+];
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+const STORAGE_KEY = "loveLotteryState_v4";
+
+let state = {
+    favourites: [],
+    sound: true,
+    petals: true,
+    reducedMotion: false,
+    revealed: 0,
+    usedMessages: []
+};
+
+function loadState(){
+
+    try{
+
+        const saved = JSON.parse(
+            localStorage.getItem(STORAGE_KEY)
+        );
+
+        if(saved){
+
+            state = {
+                ...state,
+                ...saved
+            };
+
+        }
+
+    }catch(e){
+
+        console.warn("Could not load saved state.");
+
+    }
+
+    if(!Array.isArray(state.favourites)){
+        state.favourites = [];
+    }
+
+    if(!Array.isArray(state.usedMessages)){
+        state.usedMessages = [];
+    }
+
+}
+
+function saveState(){
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(state)
+    );
+
+}
+
+
+/* =========================================================
+   NON-REPEATING MESSAGE SYSTEM
+========================================================= */
+
+function getNewMessages(amount = 3){
+
+    const picked = [];
+
+    while(picked.length < amount){
+
+        let unused = messages.filter(
+            message => !state.usedMessages.includes(message)
+        );
+
+        /*
+           Once every message has appeared, start
+           a completely new cycle.
+        */
+        if(unused.length === 0){
+
+            state.usedMessages = [];
+
+            unused = [...messages];
+
+        }
+
+        const index =
+            Math.floor(Math.random() * unused.length);
+
+        const message = unused[index];
+
+        picked.push(message);
+
+        state.usedMessages.push(message);
+
+    }
+
+    saveState();
+
+    return picked;
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const cardsEl = document.getElementById("cards");
+
+const menuBtn = document.getElementById("menuBtn");
+const menu = document.getElementById("menu");
+
+const shuffleBtn = document.getElementById("shuffleBtn");
+const revealBtn = document.getElementById("revealBtn");
+
+const favourites = document.getElementById("favourites");
+const favouritesBtn = document.getElementById("favouritesBtn");
+const closeFav = document.getElementById("closeFav");
+const favList = document.getElementById("favList");
+
+const petalsEl = document.getElementById("petals");
+
+const petalsToggle = document.getElementById("petalsToggle");
+const soundToggle = document.getElementById("soundToggle");
+const motionToggle = document.getElementById("motionToggle");
+
+const petalSwitch = document.getElementById("petalSwitch");
+const soundSwitch = document.getElementById("soundSwitch");
+const motionSwitch = document.getElementById("motionSwitch");
+
+const resetBtn = document.getElementById("resetBtn");
+
+
+/* =========================================================
+   MENU
+========================================================= */
+
+menuBtn.addEventListener("click", event => {
+
+    event.stopPropagation();
+
+    menu.classList.toggle("open");
+
+});
+
+document.addEventListener("click", event => {
+
+    if(!menu.contains(event.target) &&
+       !menuBtn.contains(event.target)){
+
+        menu.classList.remove("open");
+
+    }
+
+});
+
+
+/* =========================================================
+   AUDIO
+========================================================= */
+
+let audioContext = null;
+
+function playSound(){
+
+    if(!state.sound) return;
+
+    try{
+
+        if(!audioContext){
+
+            audioContext =
+                new (window.AudioContext ||
+                window.webkitAudioContext)();
+
+        }
+
+        const oscillator =
+            audioContext.createOscillator();
+
+        const gain =
+            audioContext.createGain();
+
+        oscillator.type = "sine";
+
+        oscillator.frequency.setValueAtTime(
+            620,
+            audioContext.currentTime
+        );
+
+        oscillator.frequency.exponentialRampToValueAtTime(
+            900,
+            audioContext.currentTime + .12
+        );
+
+        gain.gain.setValueAtTime(
+            .0001,
+            audioContext.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            .06,
+            audioContext.currentTime + .015
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            .0001,
+            audioContext.currentTime + .18
+        );
+
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
+
+        oscillator.start();
+        oscillator.stop(
+            audioContext.currentTime + .2
+        );
+
+    }catch(e){}
+
+}
+
+
+/* =========================================================
+   HEART BURST
+========================================================= */
+
+function heartBurst(x,y){
+
+    if(state.reducedMotion) return;
+
+    for(let i=0;i<10;i++){
+
+        const heart =
+            document.createElement("div");
+
+        heart.className = "burst-heart";
+        heart.textContent =
+            Math.random() > .35 ? "♡" : "♥";
+
+        heart.style.left = `${x}px`;
+        heart.style.top = `${y}px`;
+
+        heart.style.setProperty(
+            "--bx",
+            `${(Math.random()-.5)*180}px`
+        );
+
+        heart.style.setProperty(
+            "--by",
+            `${(Math.random()-.5)*180}px`
+        );
+
+        heart.style.setProperty(
+            "--rot",
+            `${(Math.random()-.5)*80}deg`
+        );
+
+        document.body.appendChild(heart);
+
+        setTimeout(
+            () => heart.remove(),
+            950
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   3D TILT
+========================================================= */
+
+function setupTilt(card){
+
+    if(state.reducedMotion) return;
+
+    let rect;
+
+    function move(e){
+
+        if(!rect){
+
+            rect = card.getBoundingClientRect();
+
+        }
+
+        const x =
+            e.clientX - rect.left;
+
+        const y =
+            e.clientY - rect.top;
+
+        const rotateY =
+            ((x / rect.width) - .5) * 10;
+
+        const rotateX =
+            ((y / rect.height) - .5) * -10;
+
+        card.style.transform =
+            `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(4px)`;
+
+    }
+
+    function leave(){
+
+        rect = null;
+
+        card.style.transform =
+            "rotateX(0deg) rotateY(0deg) translateZ(0)";
+
+    }
+
+    card.addEventListener("pointermove", move);
+
+    card.addEventListener("pointerleave", leave);
+
+}
+
+
+/* =========================================================
+   SCRATCH CARD
+========================================================= */
+
+class ScratchCard{
+
+    constructor(card, message){
+
+        this.card = card;
+        this.message = message;
+
+        this.canvas =
+            card.querySelector(".scratch-layer");
+
+        this.ctx =
+            this.canvas.getContext("2d", {
+                willReadFrequently:true
+            });
+
+        this.isDown = false;
+        this.lastX = 0;
+        this.lastY = 0;
+        this.revealed = false;
+
+        /*
+           Resize after the card has finished laying out. This keeps the
+           scratch surface exactly the same size as the card, including
+           after responsive/grid changes and font loading.
+        */
+        this.resize();
+        requestAnimationFrame(() => this.resize());
+
+        this.resizeObserver = new ResizeObserver(() => this.resize());
+        this.resizeObserver.observe(this.card);
+
+        /*
+           Pointer events stop the image/page from
+           being dragged while scratching.
+        */
+        this.canvas.addEventListener(
+            "pointerdown",
+            this.start.bind(this),
+            {passive:false}
+        );
+
+        this.canvas.addEventListener(
+            "pointermove",
+            this.move.bind(this),
+            {passive:false}
+        );
+
+        this.canvas.addEventListener(
+            "pointerup",
+            this.end.bind(this),
+            {passive:false}
+        );
+
+        this.canvas.addEventListener(
+            "pointercancel",
+            this.end.bind(this),
+            {passive:false}
+        );
+
+        window.addEventListener(
+            "resize",
+            () => this.resize()
+        );
+
+    }
+
+
+    resize(){
+
+        const rect =
+            this.canvas.getBoundingClientRect();
+
+        const dpr =
+            Math.min(window.devicePixelRatio || 1,2);
+
+        this.canvas.width =
+            Math.round(rect.width * dpr);
+
+        this.canvas.height =
+            Math.round(rect.height * dpr);
+
+        this.ctx.setTransform(
+            dpr,0,0,dpr,0,0
+        );
+
+        if(!this.revealed){
+
+            this.paint();
+
+        }
+
+    }
+
+
+    paint(){
+
+        const rect =
+            this.canvas.getBoundingClientRect();
+
+        const ctx = this.ctx;
+
+        ctx.clearRect(
+            0,
+            0,
+            rect.width,
+            rect.height
+        );
+
+        /*
+           Clean scratch surface.
+        */
+
+        const gradient =
+            ctx.createLinearGradient(
+                0,
+                0,
+                rect.width,
+                rect.height
+            );
+
+        gradient.addColorStop(
+            0,
+            "#ffc4d9"
+        );
+
+        gradient.addColorStop(
+            .5,
+            "#ffadc9"
+        );
+
+        gradient.addColorStop(
+            1,
+            "#ffbfd5"
+        );
+
+        ctx.fillStyle = gradient;
+
+        ctx.fillRect(
+            0,
+            0,
+            rect.width,
+            rect.height
+        );
+
+        /*
+           Subtle shine.
+        */
+
+        ctx.fillStyle =
+            "rgba(255,255,255,.16)";
+
+        for(let i=0;i<18;i++){
+
+            const x =
+                Math.random()*rect.width;
+
+            const y =
+                Math.random()*rect.height;
+
+            ctx.beginPath();
+
+            ctx.arc(
+                x,
+                y,
+                1.5,
+                0,
+                Math.PI*2
+            );
+
+            ctx.fill();
+
+        }
+
+        /*
+           Center heart.
+        */
+
+        ctx.fillStyle =
+            "rgba(255,255,255,.9)";
+
+        ctx.font =
+            "34px Arial";
+
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.fillText(
+            "♡",
+            rect.width/2,
+            rect.height/2 - 10
+        );
+
+        ctx.font =
+            "600 12px DM Sans";
+
+        ctx.fillText(
+            "scratch me",
+            rect.width/2,
+            rect.height/2 + 24
+        );
+
+    }
+
+
+    getPoint(e){
+
+        const rect =
+            this.canvas.getBoundingClientRect();
+
+        return {
+
+            x:e.clientX - rect.left,
+
+            y:e.clientY - rect.top
+
+        };
+
+    }
+
+
+    start(e){
+
+        if(this.revealed) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        this.isDown = true;
+
+        /*
+           THIS fixes the "catching/moving image" issue.
+           The pointer becomes locked to this canvas.
+        */
+        try{
+
+            this.canvas.setPointerCapture(
+                e.pointerId
+            );
+
+        }catch(err){}
+
+        const point =
+            this.getPoint(e);
+
+        this.lastX = point.x;
+        this.lastY = point.y;
+
+        this.scratch(
+            point.x,
+            point.y
+        );
+
+    }
+
+
+    move(e){
+
+        if(!this.isDown ||
+           this.revealed) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const point =
+            this.getPoint(e);
+
+        const distance =
+            Math.hypot(
+                point.x - this.lastX,
+                point.y - this.lastY
+            );
+
+        if(distance > 1){
+
+            this.scratch(
+                point.x,
+                point.y
+            );
+
+            this.lastX = point.x;
+            this.lastY = point.y;
+
+        }
+
+    }
+
+
+    end(e){
+
+        if(!this.isDown) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        this.isDown = false;
+
+        try{
+
+            this.canvas.releasePointerCapture(
+                e.pointerId
+            );
+
+        }catch(err){}
+
+        this.checkProgress();
+
+    }
+
+
+    scratch(x,y){
+
+        const ctx = this.ctx;
+
+        ctx.save();
+
+        ctx.globalCompositeOperation =
+            "destination-out";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            x,
+            y,
+            25,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+        /*
+           Make continuous scratching smooth.
+        */
+
+        if(this.lastX !== undefined){
+
+            ctx.lineWidth = 50;
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                this.lastX,
+                this.lastY
+            );
+
+            ctx.lineTo(
+                x,
+                y
+            );
+
+            ctx.stroke();
+
+        }
+
+        ctx.restore();
+
+    }
+
+
+    checkProgress(){
+
+        if(this.revealed) return;
+
+        const rect =
+            this.canvas.getBoundingClientRect();
+
+        const sample =
+            this.ctx.getImageData(
+                0,
+                0,
+                this.canvas.width,
+                this.canvas.height
+            );
+
+        let transparent = 0;
+
+        /*
+           Sample pixels rather than checking every pixel.
+        */
+
+        for(
+            let i=3;
+            i<sample.data.length;
+            i+=40
+        ){
+
+            if(sample.data[i] < 80){
+
+                transparent++;
+
+            }
+
+        }
+
+        const total =
+            sample.data.length / 40;
+
+        const percent =
+            transparent / total;
+
+        if(percent > .48){
+
+            this.reveal();
+
+        }
+
+    }
+
+
+    reveal(){
+
+        if(this.revealed) return;
+
+        this.revealed = true;
+
+        this.card.classList.add("revealed");
+
+        this.canvas.classList.add("revealed");
+
+        state.revealed++;
+
+        saveState();
+
+        playSound();
+
+        const rect =
+            this.card.getBoundingClientRect();
+
+        heartBurst(
+            rect.left + rect.width/2,
+            rect.top + rect.height/2
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   CREATE CARDS
+========================================================= */
+
+let activeCards = [];
+
+function createCards(){
+
+    activeCards = [];
+
+    cardsEl.innerHTML = "";
+
+    const selected =
+        getNewMessages(3);
+
+    selected.forEach(
+        (message,index) => {
+
+            const card =
+                document.createElement("article");
+
+            card.className = "card";
+
+            card.innerHTML = `
+
+                <div class="card-number">
+                    0${index+1}
+                </div>
+
+                <div class="card-inner">
+
+                    <div class="card-icon">
+                        ♡
+                    </div>
+
+                    <div class="message">
+                        ${escapeHTML(message)}
+                    </div>
+
+                    <button
+                        class="fav-btn"
+                        aria-label="Favourite"
+                    >
+                        ♡
+                    </button>
+
+                </div>
+
+                <canvas
+                    class="scratch-layer"
+                ></canvas>
+
+            `;
+
+            cardsEl.appendChild(card);
+
+            setupTilt(card);
+
+            const fav =
+                card.querySelector(".fav-btn");
+
+            if(
+                state.favourites.includes(message)
+            ){
+
+                fav.classList.add("active");
+                fav.textContent = "♥";
+
+            }
+
+            fav.addEventListener(
+                "click",
+                e => {
+
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    toggleFavourite(
+                        message,
+                        fav
+                    );
+
+                }
+            );
+
+            const scratch =
+                new ScratchCard(
+                    card,
+                    message
+                );
+
+            activeCards.push(scratch);
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(str){
+
+    const div =
+        document.createElement("div");
+
+    div.textContent = str;
+
+    return div.innerHTML;
+
+}
+
+
+/* =========================================================
+   FAVOURITES
+========================================================= */
+
+function toggleFavourite(
+    message,
+    button
+){
+
+    const index =
+        state.favourites.indexOf(message);
+
+    if(index === -1){
+
+        state.favourites.push(message);
+
+        button.classList.add("active");
+
+        button.textContent = "♥";
+
+    }else{
+
+        state.favourites.splice(
+            index,
+            1
+        );
+
+        button.classList.remove("active");
+
+        button.textContent = "♡";
+
+    }
+
+    saveState();
+
+    renderFavourites();
+
+}
+
+
+function renderFavourites(){
+
+    favList.innerHTML = "";
+
+    if(state.favourites.length === 0){
+
+        const empty =
+            document.createElement("div");
+
+        empty.className = "fav-item";
+
+        empty.textContent =
+            "no favourites yet ♡";
+
+        favList.appendChild(empty);
+
+        return;
+
+    }
+
+    [...state.favourites]
+        .reverse()
+        .forEach(message => {
+
+            const item =
+                document.createElement("div");
+
+            item.className = "fav-item";
+
+            item.textContent =
+                message;
+
+            favList.appendChild(item);
+
+        });
+
+}
+
+
+/* =========================================================
+   FAVOURITES PANEL
+========================================================= */
+
+favouritesBtn.addEventListener(
+    "click",
+    () => {
+
+        menu.classList.remove("open");
+
+        renderFavourites();
+
+        favourites.classList.add("open");
+
+    }
+);
+
+closeFav.addEventListener(
+    "click",
+    () => {
+
+        favourites.classList.remove("open");
+
+    }
+);
+
+favourites.addEventListener(
+    "click",
+    e => {
+
+        if(e.target === favourites){
+
+            favourites.classList.remove("open");
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   PETALS
+========================================================= */
+
+let petalInterval = null;
+
+function makePetal(){
+
+    if(!state.petals) return;
+
+    const petal =
+        document.createElement("div");
+
+    petal.className = "petal";
+
+    petal.style.left =
+        `${Math.random()*100}%`;
+
+    petal.style.setProperty(
+        "--x",
+        `${(Math.random()-.5)*240}px`
+    );
+
+    petal.style.animationDuration =
+        `${5 + Math.random()*6}s`;
+
+    petal.style.opacity =
+        `${.2 + Math.random()*.35}`;
+
+    petal.style.transform =
+        `rotate(${Math.random()*180}deg)`;
+
+    petalsEl.appendChild(petal);
+
+    setTimeout(
+        () => petal.remove(),
+        12000
+    );
+
+}
+
+
+function startPetals(){
+
+    clearInterval(petalInterval);
+
+    if(!state.petals) return;
+
+    petalInterval =
+        setInterval(
+            makePetal,
+            650
+        );
+
+}
+
+
+function updatePetals(){
+
+    petalsEl.innerHTML = "";
+
+    if(state.petals){
+
+        startPetals();
+
+    }else{
+
+        clearInterval(
+            petalInterval
+        );
+
+    }
+
+    petalSwitch.classList.toggle(
+        "active",
+        state.petals
+    );
+
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+function updateSettings(){
+
+    petalSwitch.classList.toggle(
+        "active",
+        state.petals
+    );
+
+    soundSwitch.classList.toggle(
+        "active",
+        state.sound
+    );
+
+    motionSwitch.classList.toggle(
+        "active",
+        state.reducedMotion
+    );
+
+    document.body.classList.toggle(
+        "reduce-motion",
+        state.reducedMotion
+    );
+
+}
+
+
+petalsToggle.addEventListener(
+    "click",
+    () => {
+
+        state.petals =
+            !state.petals;
+
+        saveState();
+
+        updateSettings();
+
+        updatePetals();
+
+    }
+);
+
+
+soundToggle.addEventListener(
+    "click",
+    () => {
+
+        state.sound =
+            !state.sound;
+
+        saveState();
+
+        updateSettings();
+
+        if(state.sound){
+
+            playSound();
+
+        }
+
+    }
+);
+
+
+motionToggle.addEventListener(
+    "click",
+    () => {
+
+        state.reducedMotion =
+            !state.reducedMotion;
+
+        saveState();
+
+        updateSettings();
+
+        /*
+           Rebuild tilt behaviour if motion changes.
+        */
+
+        createCards();
+
+    }
+);
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+resetBtn.addEventListener(
+    "click",
+    () => {
+
+        state.usedMessages = [];
+        state.revealed = 0;
+
+        saveState();
+
+        menu.classList.remove("open");
+
+        createCards();
+
+    }
+);
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+shuffleBtn.addEventListener(
+    "click",
+    () => {
+
+        createCards();
+
+    }
+);
+
+
+revealBtn.addEventListener(
+    "click",
+    () => {
+
+        activeCards.forEach(
+            scratch => {
+
+                scratch.reveal();
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   PREVENT DRAGGING
+   This is the other part that stops the page from
+   "catching" the card/image while scratching.
+========================================================= */
+
+document.addEventListener(
+    "dragstart",
+    e => {
+
+        if(
+            e.target.closest(".card") ||
+            e.target.closest(".scratch-layer")
+        ){
+
+            e.preventDefault();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+loadState();
+
+updateSettings();
+
+updatePetals();
+
+renderFavourites();
+
+createCards();
+
+</script>
+
+</body>
+</html>
