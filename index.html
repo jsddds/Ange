@@ -2143,8 +2143,9 @@ class ScratchCard{
         this.lastY = 0;
         this.revealed = false;
 
-        this.resize();
-        this.paint();
+    requestAnimationFrame(() => {
+    this.resize();
+});
 
         /*
            Pointer events stop the image/page from
